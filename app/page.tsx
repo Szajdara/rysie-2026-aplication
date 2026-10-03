@@ -398,23 +398,7 @@ export default function HomePage() {
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
-        {/* Info Legend Banner */}
-        <div className="mb-6 p-4 rounded-3xl bg-white dark:bg-zinc-900/60 border border-slate-200 dark:border-zinc-800/80 backdrop-blur-sm shadow-md shadow-slate-200/50 dark:shadow-none flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs transition-colors">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-slate-800 dark:text-zinc-200">Zasady wyróżnień:</span>
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-400 text-zinc-950 font-black shadow-sm shadow-amber-400/30">
-                🥇 Złoty Kolor = Zwycięzca (1. miejsce)
-              </span>
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-200 text-zinc-950 font-bold shadow-sm shadow-slate-300/20">
-                🥈 Srebrny Kolor = Nominowani (2. i 3. miejsce)
-              </span>
-            </div>
-          </div>
-          <div className="text-slate-500 dark:text-zinc-400 flex items-center gap-1.5 self-end sm:self-auto">
-            <span>Dotknij <strong>+</strong> lub <strong>-</strong> aby zliczać karty do głosowania</span>
-          </div>
-        </div>
+
 
         {/* 6 Categories Grid */}
         <div
