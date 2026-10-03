@@ -29,6 +29,7 @@ export default function HomePage() {
   const [historyStack, setHistoryStack] = useState<HistoryAction[]>([]);
   const [allKnownTeacherNames, setAllKnownTeacherNames] = useState<string[]>([]);
   const [isCloudSynced, setIsCloudSynced] = useState<boolean>(false);
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
   // Modals state
   const [isGalaModalOpen, setIsGalaModalOpen] = useState(false);
@@ -37,6 +38,15 @@ export default function HomePage() {
 
   // 1. Initial Authentication and Data loading
   useEffect(() => {
+    // Initialize Theme
+    const storedTheme = (localStorage.getItem('rysie_theme') as 'dark' | 'light') || 'dark';
+    setTheme(storedTheme);
+    if (storedTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
     // Check local session
     const storedSession = sessionStorage.getItem('rysie_session');
     if (storedSession) {
@@ -97,7 +107,6 @@ export default function HomePage() {
       .then((data) => {
         if (data?.cloudSync && data?.votes) {
           setIsCloudSynced(true);
-          // If local is empty, populate from cloud
           if (!savedVotes || Object.values(JSON.parse(savedVotes || '{}')).flat().length === 0) {
             setVotesData(data.votes);
           }
@@ -107,6 +116,19 @@ export default function HomePage() {
         // Silent fallback to local storage
       });
   }, []);
+
+  const handleToggleTheme = () => {
+    const nextTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(nextTheme);
+    try {
+      localStorage.setItem('rysie_theme', nextTheme);
+      if (nextTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    } catch {}
+  };
 
   // Save changes to localStorage & trigger background cloud sync
   const persistVotes = useCallback((newData: VotesData) => {
@@ -283,7 +305,6 @@ export default function HomePage() {
     });
     persistVotes(sanitized);
 
-    // Also populate known teachers registry
     const names = Object.values(sanitized)
       .flat()
       .map((t) => t.name);
@@ -316,10 +337,10 @@ export default function HomePage() {
   // Loading state
   if (isAuthenticated === null) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 flex items-center justify-center transition-colors">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-3 border-amber-400 border-t-transparent rounded-full animate-spin" />
-          <p className="text-zinc-400 text-sm font-medium">Ładowanie panelu Rysie 2026...</p>
+          <div className="w-10 h-10 border-3 border-amber-500 dark:border-amber-400 border-t-transparent rounded-full animate-spin" />
+          <p className="text-slate-600 dark:text-zinc-400 text-sm font-medium">Ładowanie panelu Rysie 2026...</p>
         </div>
       </div>
     );
@@ -333,6 +354,8 @@ export default function HomePage() {
           setCurrentUser(user);
           setIsAuthenticated(true);
         }}
+        theme={theme}
+        onToggleTheme={handleToggleTheme}
       />
     );
   }
@@ -344,13 +367,15 @@ export default function HomePage() {
       : CATEGORIES.filter((c) => c.id === selectedTab);
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex flex-col text-zinc-100">
+    <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 flex flex-col text-slate-900 dark:text-zinc-100 transition-colors duration-200">
       {/* Top Navigation */}
       <Navbar
         user={currentUser}
         totalVotes={totalVotes}
         totalTeachers={totalTeachers}
         canUndo={historyStack.length > 0}
+        theme={theme}
+        onToggleTheme={handleToggleTheme}
         onUndo={handleUndo}
         onOpenGala={() => setIsGalaModalOpen(true)}
         onOpenProtocol={() => setIsProtocolModalOpen(true)}
@@ -377,9 +402,9 @@ export default function HomePage() {
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
         {/* Info Legend Banner */}
-        <div className="mb-6 p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800/80 backdrop-blur-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+        <div className="mb-6 p-4 rounded-3xl bg-white dark:bg-zinc-900/60 border border-slate-200 dark:border-zinc-800/80 backdrop-blur-sm shadow-md shadow-slate-200/50 dark:shadow-none flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs transition-colors">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-zinc-200">Zasady wyróżnień:</span>
+            <span className="font-bold text-slate-800 dark:text-zinc-200">Zasady wyróżnień:</span>
             <div className="flex items-center gap-2 flex-wrap">
               <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-400 text-zinc-950 font-black shadow-sm shadow-amber-400/30">
                 🥇 Złoty Kolor = Zwycięzca (1. miejsce)
@@ -389,7 +414,7 @@ export default function HomePage() {
               </span>
             </div>
           </div>
-          <div className="text-zinc-400 flex items-center gap-1.5 self-end sm:self-auto">
+          <div className="text-slate-500 dark:text-zinc-400 flex items-center gap-1.5 self-end sm:self-auto">
             <span>Dotknij <strong>+</strong> lub <strong>-</strong> aby zliczać karty do głosowania</span>
           </div>
         </div>

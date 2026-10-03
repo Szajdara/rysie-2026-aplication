@@ -1,7 +1,22 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   :root {
+    color-scheme: light;
+    --bg-page: #f8fafc;
+    --text-page: #0f172a;
+    --gold-primary: #f59e0b;
+    --gold-glow: rgba(245, 158, 11, 0.3);
+    --silver-primary: #94a3b8;
+    --silver-glow: rgba(148, 163, 184, 0.25);
+  }
+
+  html.dark {
+    color-scheme: dark;
+    --bg-page: #09090b;
+    --text-page: #f4f4f5;
     --gold-primary: #f59e0b;
     --gold-glow: rgba(245, 158, 11, 0.4);
     --silver-primary: #cbd5e1;
@@ -9,20 +24,26 @@
   }
 
   body {
-    background-color: #09090b;
-    color: #f4f4f5;
+    background-color: var(--bg-page);
+    color: var(--text-page);
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 }
 
 /* Custom Gold & Silver Glow Effects */
 .gold-card-glow {
-  box-shadow: 0 0 25px rgba(245, 158, 11, 0.25), inset 0 0 15px rgba(245, 158, 11, 0.1);
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.25), inset 0 0 10px rgba(245, 158, 11, 0.08);
   border-color: #f59e0b !important;
 }
 
 .silver-card-glow {
+  box-shadow: 0 0 16px rgba(148, 163, 184, 0.25), inset 0 0 8px rgba(148, 163, 184, 0.06);
+  border-color: #94a3b8 !important;
+}
+
+.dark .silver-card-glow {
   box-shadow: 0 0 20px rgba(203, 213, 225, 0.2), inset 0 0 10px rgba(203, 213, 225, 0.08);
   border-color: #cbd5e1 !important;
 }
@@ -43,7 +64,7 @@
   animation: shimmer 3s infinite;
 }
 
-/* Sleek Dark Scrollbar & No-Scrollbar Utilities */
+/* Sleek Scrollbar & No-Scrollbar Utilities */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -52,10 +73,17 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.15);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+}
+.dark ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.3);
 }
 

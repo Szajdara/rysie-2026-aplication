@@ -71,7 +71,6 @@ export default function CategoryCard({
       return;
     }
 
-    // Check if teacher already exists in this category
     const alreadyExists = teachers.some(
       (t) => t.name.toLowerCase() === trimmed.toLowerCase()
     );
@@ -91,26 +90,26 @@ export default function CategoryCard({
   return (
     <div
       id={`cat-${category.id}`}
-      className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 sm:p-5 shadow-xl flex flex-col h-full backdrop-blur-sm transition-all"
+      className="bg-white dark:bg-zinc-900/80 border border-slate-200 dark:border-zinc-800 rounded-3xl p-4 sm:p-5 shadow-lg shadow-slate-200/50 dark:shadow-none flex flex-col h-full backdrop-blur-sm transition-all"
     >
       {/* Category Header */}
-      <div className="flex items-start justify-between gap-3 pb-3.5 border-b border-zinc-800/80">
+      <div className="flex items-start justify-between gap-3 pb-3.5 border-b border-slate-200 dark:border-zinc-800/80">
         <div className="flex items-start gap-3">
           <div
-            className={`w-11 h-11 rounded-xl bg-gradient-to-br ${category.badgeColor} p-0.5 shadow-md flex items-center justify-center shrink-0 mt-0.5`}
+            className={`w-11 h-11 rounded-2xl bg-gradient-to-br ${category.badgeColor} p-0.5 shadow-md flex items-center justify-center shrink-0 mt-0.5`}
           >
-            <div className="w-full h-full bg-zinc-950 rounded-[10px] flex items-center justify-center">
-              <Icon className="w-5 h-5 text-amber-400" />
+            <div className="w-full h-full bg-white dark:bg-zinc-950 rounded-[14px] flex items-center justify-center">
+              <Icon className="w-5 h-5 text-amber-500 dark:text-amber-400" />
             </div>
           </div>
           <div>
-            <h3 className="font-extrabold text-lg sm:text-xl text-white tracking-tight leading-snug">
+            <h3 className="font-extrabold text-lg sm:text-xl text-slate-900 dark:text-white tracking-tight leading-snug">
               {category.title}
             </h3>
-            <p className="text-xs text-amber-400/90 font-medium italic">
+            <p className="text-xs text-amber-600 dark:text-amber-400/90 font-medium italic">
               {category.tagline}
             </p>
-            <p className="text-xs text-zinc-400 mt-0.5 line-clamp-1">
+            <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5 line-clamp-1">
               {category.description}
             </p>
           </div>
@@ -118,11 +117,11 @@ export default function CategoryCard({
 
         {/* Total Votes in category badge */}
         <div className="text-right shrink-0">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-zinc-800/80 border border-zinc-700/60 text-xs font-bold text-amber-300">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-zinc-800/80 border border-slate-200 dark:border-zinc-700/60 text-xs font-bold text-amber-700 dark:text-amber-300">
             <span>{totalCategoryVotes}</span>
-            <span className="text-[10px] text-zinc-400 font-normal">gł.</span>
+            <span className="text-[10px] text-slate-500 dark:text-zinc-400 font-normal">gł.</span>
           </div>
-          <div className="text-[10px] text-zinc-500 mt-1 flex items-center justify-end gap-1">
+          <div className="text-[10px] text-slate-400 dark:text-zinc-500 mt-1 flex items-center justify-end gap-1">
             <Users className="w-3 h-3" />
             <span>{teachers.length}</span>
           </div>
@@ -131,15 +130,15 @@ export default function CategoryCard({
 
       {/* Leader highlight banner if available */}
       {leaderInfo && leaderInfo.maxVotes > 0 && (
-        <div className="my-3 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between text-xs text-amber-200">
+        <div className="my-3 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between text-xs text-amber-900 dark:text-amber-200">
           <div className="flex items-center gap-1.5 truncate">
-            <Trophy className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-            <span className="text-zinc-400">Prowadzi:</span>
-            <span className="font-bold text-amber-300 truncate">
+            <Trophy className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400 shrink-0" />
+            <span className="text-slate-500 dark:text-zinc-400">Prowadzi:</span>
+            <span className="font-bold text-amber-700 dark:text-amber-300 truncate">
               {leaderInfo.leaderName}
             </span>
           </div>
-          <span className="font-extrabold text-amber-400 ml-2 shrink-0">
+          <span className="font-extrabold text-amber-600 dark:text-amber-400 ml-2 shrink-0">
             {leaderInfo.maxVotes} {leaderInfo.maxVotes === 1 ? 'głos' : 'głosy'}
           </span>
         </div>
@@ -158,7 +157,7 @@ export default function CategoryCard({
                 if (inputError) setInputError(null);
               }}
               placeholder="Wpisz imię i nazwisko nauczyciela..."
-              className="w-full px-3.5 py-2.5 bg-zinc-950/90 border border-zinc-700/80 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all"
+              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-zinc-950/90 border border-slate-300 dark:border-zinc-700/80 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 focus:bg-white transition-all"
             />
             {/* Suggestions datalist */}
             <datalist id={datalistId}>
@@ -177,7 +176,7 @@ export default function CategoryCard({
         </div>
 
         {inputError && (
-          <p className="text-red-400 text-xs mt-1.5 px-1 font-medium">
+          <p className="text-red-500 dark:text-red-400 text-xs mt-1.5 px-1 font-medium">
             {inputError}
           </p>
         )}
@@ -186,9 +185,9 @@ export default function CategoryCard({
       {/* Teachers List */}
       <div className="space-y-2.5 mt-2">
         {rankedTeachers.length === 0 ? (
-          <div className="text-center py-8 px-4 rounded-xl border border-dashed border-zinc-800 text-zinc-500 text-xs">
-            <Users className="w-7 h-7 mx-auto mb-2 text-zinc-600" />
-            <p className="font-semibold text-zinc-400">
+          <div className="text-center py-8 px-4 rounded-2xl border border-dashed border-slate-200 dark:border-zinc-800 text-slate-400 dark:text-zinc-500 text-xs">
+            <Users className="w-7 h-7 mx-auto mb-2 text-slate-400 dark:text-zinc-600" />
+            <p className="font-semibold text-slate-600 dark:text-zinc-400">
               Brak nauczycieli w tej kategorii
             </p>
             <p className="mt-1 text-[11px]">
