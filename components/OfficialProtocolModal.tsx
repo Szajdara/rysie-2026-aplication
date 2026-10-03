@@ -121,9 +121,6 @@ export default function OfficialProtocolModal({
                       </td>
                       <td className="py-3 px-3 font-semibold text-zinc-900">
                         <div>{cat.title}</div>
-                        <div className="text-[10px] text-zinc-500 font-normal italic">
-                          {cat.tagline}
-                        </div>
                       </td>
                       <td className="py-3 px-3">
                         {winners.length > 0 ? (

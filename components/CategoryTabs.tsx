@@ -3,22 +3,13 @@
 import React from 'react';
 import { CATEGORIES } from '@/lib/constants';
 import { CategoryId, VotesData } from '@/lib/types';
-import { LayoutGrid, Zap, Shield, Search, Flame, Sparkles, Crown } from 'lucide-react';
+import { LayoutGrid } from 'lucide-react';
 
 interface CategoryTabsProps {
   selectedTab: CategoryId | 'all';
   onSelectTab: (tab: CategoryId | 'all') => void;
   votesData: VotesData;
 }
-
-const ICON_MAP = {
-  Zap,
-  Shield,
-  Search,
-  Flame,
-  Sparkles,
-  Crown,
-};
 
 export default function CategoryTabs({
   selectedTab,
@@ -59,7 +50,6 @@ export default function CategoryTabs({
 
         {/* 6 Category pills */}
         {CATEGORIES.map((cat) => {
-          const Icon = ICON_MAP[cat.iconName] || Crown;
           const votesCount = getTotalVotes(cat.id);
           const isSelected = selectedTab === cat.id;
 
@@ -73,7 +63,6 @@ export default function CategoryTabs({
                   : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 dark:bg-zinc-900/90 dark:hover:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-800/80'
               }`}
             >
-              <Icon className={`w-3.5 h-3.5 ${isSelected ? 'text-white' : 'text-blue-500 dark:text-blue-400'}`} />
               <span>{cat.shortTitle}</span>
               <span
                 className={`px-1.5 py-0.2 rounded-full text-[10px] ${

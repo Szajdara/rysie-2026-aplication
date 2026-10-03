@@ -79,28 +79,20 @@ export default function CategoryCard({
       className="bg-white dark:bg-zinc-900/80 border border-slate-200 dark:border-zinc-800 rounded-3xl p-4 sm:p-5 shadow-lg shadow-slate-200/50 dark:shadow-none flex flex-col h-full backdrop-blur-sm transition-all"
     >
       {/* Category Header */}
-      <div className="flex items-start justify-between gap-3 pb-3.5 border-b border-slate-200 dark:border-zinc-800/80">
-        <div>
-          <h3 className="font-extrabold text-lg sm:text-xl text-slate-900 dark:text-white tracking-tight leading-snug">
-            {category.title}
-          </h3>
-          <p className="text-xs text-blue-600 dark:text-blue-400 font-medium italic mt-0.5">
-            {category.tagline}
-          </p>
-          <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1 line-clamp-2">
-            {category.description}
-          </p>
-        </div>
+      <div className="flex items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-zinc-800/80">
+        <h3 className="font-extrabold text-lg sm:text-xl text-slate-900 dark:text-white tracking-tight">
+          {category.title}
+        </h3>
 
         {/* Total Votes in category badge */}
-        <div className="text-right shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-zinc-800/80 border border-slate-200 dark:border-zinc-700/60 text-xs font-bold text-blue-700 dark:text-blue-300">
             <span>{totalCategoryVotes}</span>
             <span className="text-[10px] text-slate-500 dark:text-zinc-400 font-normal">gł.</span>
           </div>
-          <div className="text-[10px] text-slate-400 dark:text-zinc-500 mt-1 flex items-center justify-end gap-1">
-            <Users className="w-3 h-3" />
-            <span>{teachers.length}</span>
+          <div className="text-xs text-slate-500 dark:text-zinc-400 flex items-center gap-1 px-2 py-1 rounded-xl bg-slate-100 dark:bg-zinc-800/80 border border-slate-200 dark:border-zinc-700/60">
+            <Users className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-500" />
+            <span className="font-semibold text-slate-700 dark:text-zinc-300">{teachers.length}</span>
           </div>
         </div>
       </div>
