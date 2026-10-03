@@ -6,6 +6,31 @@ import { verifySignedSession } from '@/lib/auth-server';
 let cachedVotes: VotesData | null = null;
 let lastUpdated: number = Date.now();
 
+function cleanEnv(val?: string): string | undefined {
+  if (!val) return undefined;
+  let cleaned = val.trim();
+  if (
+    (cleaned.startsWith('"') && cleaned.endsWith('"')) ||
+    (cleaned.startsWith("'") && cleaned.endsWith("'"))
+  ) {
+    cleaned = cleaned.slice(1, -1).trim();
+  }
+  return cleaned || undefined;
+}
+
+function getRedisConfig() {
+  const rawUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+  const rawToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
+  let redisUrl = cleanEnv(rawUrl);
+  const redisToken = cleanEnv(rawToken);
+
+  if (redisUrl && !redisUrl.startsWith('http://') && !redisUrl.startsWith('https://')) {
+    redisUrl = `https://${redisUrl}`;
+  }
+
+  return { redisUrl, redisToken };
+}
+
 export async function GET(req: NextRequest) {
   // Cybersecurity verification: only authenticated organizers can read votes
   const token = req.cookies.get('rysie_auth_session')?.value;
@@ -15,8 +40,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Nieautoryzowany dostęp' }, { status: 401 });
   }
 
-  const redisUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
-  const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
+  const { redisUrl, redisToken } = getRedisConfig();
 
   if (redisUrl && redisToken) {
     try {
@@ -69,8 +93,7 @@ export async function POST(req: NextRequest) {
     cachedVotes = votes;
     lastUpdated = now;
 
-    const redisUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
-    const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
+    const { redisUrl, redisToken } = getRedisConfig();
 
     if (redisUrl && redisToken) {
       try {

@@ -68,7 +68,8 @@ export default function HomePage() {
       .then((data) => {
         if (data.authenticated) {
           setIsAuthenticated(true);
-        } else if (!storedSession) {
+        } else {
+          sessionStorage.removeItem('rysie_session');
           setIsAuthenticated(false);
         }
       })
@@ -124,6 +125,11 @@ export default function HomePage() {
     if (isPushingRef.current) return;
     try {
       const res = await fetch('/api/sync', { cache: 'no-store' });
+      if (res.status === 401) {
+        sessionStorage.removeItem('rysie_session');
+        setIsAuthenticated(false);
+        return;
+      }
       if (!res.ok) return;
       const data = await res.json();
       setIsCloudSynced(Boolean(data?.cloudSync));
