@@ -11,6 +11,7 @@ import {
   X,
   AlertTriangle,
   CheckCircle2,
+  KeyRound,
 } from 'lucide-react';
 
 interface BackupModalProps {
@@ -29,8 +30,30 @@ export default function BackupModal({
   onResetAllData,
 }: BackupModalProps) {
   const [resetConfirmInput, setResetConfirmInput] = useState('');
+  const [newPasswordInput, setNewPasswordInput] = useState('');
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handleSavePassword = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = newPasswordInput.trim();
+    if (!trimmed) {
+      setErrorMessage('Wpisz nowe hasło.');
+      return;
+    }
+    if (trimmed.length < 3) {
+      setErrorMessage('Hasło powinno mieć co najmniej 3 znaki.');
+      return;
+    }
+    try {
+      localStorage.setItem('rysie_custom_password', trimmed);
+      setSuccessMessage(`Nowe hasło zostało zapisane: "${trimmed}"`);
+      setNewPasswordInput('');
+      setTimeout(() => setSuccessMessage(null), 4000);
+    } catch {
+      setErrorMessage('Nie udało się zapisać hasła w przeglądarce.');
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -213,6 +236,32 @@ export default function BackupModal({
                 className="hidden"
               />
             </label>
+          </div>
+
+          {/* Change Password Card */}
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800">
+            <div className="flex items-center gap-2 text-slate-900 dark:text-zinc-100 font-bold text-sm">
+              <KeyRound className="w-4 h-4 text-amber-500" />
+              <span>Zmień hasło dostępu do panelu</span>
+            </div>
+            <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+              Ustaw nowe własne hasło dla komisji liczącej głosy.
+            </p>
+            <form onSubmit={handleSavePassword} className="flex items-center gap-2 mt-3">
+              <input
+                type="password"
+                value={newPasswordInput}
+                onChange={(e) => setNewPasswordInput(e.target.value)}
+                placeholder="Wpisz nowe hasło..."
+                className="flex-1 px-3.5 py-2 bg-white dark:bg-zinc-950 border border-slate-300 dark:border-zinc-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+              />
+              <button
+                type="submit"
+                className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 font-bold text-xs text-black transition-all active:scale-95 shrink-0"
+              >
+                Zapisz hasło
+              </button>
+            </form>
           </div>
 
           {/* Danger zone: Reset */}

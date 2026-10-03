@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Lock, User, Eye, EyeOff, Award, Sparkles, CheckCircle2, AlertCircle, Sun, Moon } from 'lucide-react';
+import { Lock, User, Eye, EyeOff, Award, Sparkles, AlertCircle, Sun, Moon } from 'lucide-react';
 import { DEFAULT_AUTH_CREDENTIALS } from '@/lib/constants';
 
 interface LoginScreenProps {
@@ -31,39 +31,38 @@ export default function LoginScreen({ onLoginSuccess, theme, onToggleTheme }: Lo
 
       const data = await res.json();
 
-      if (res.ok && data.success) {
+      const storedCustomPass = typeof window !== 'undefined' ? localStorage.getItem('rysie_custom_password') : null;
+      const expectedPass = storedCustomPass || DEFAULT_AUTH_CREDENTIALS.password;
+
+      if (res.ok && data.success && (!storedCustomPass || password.trim() === storedCustomPass)) {
         sessionStorage.setItem('rysie_session', JSON.stringify({ user: data.user, time: Date.now() }));
         onLoginSuccess(data.user);
       } else {
         if (
           login.trim().toLowerCase() === DEFAULT_AUTH_CREDENTIALS.login.toLowerCase() &&
-          password.trim() === DEFAULT_AUTH_CREDENTIALS.password
+          password.trim() === expectedPass
         ) {
           sessionStorage.setItem('rysie_session', JSON.stringify({ user: login, time: Date.now() }));
           onLoginSuccess(login);
         } else {
-          setError(data.message || 'Nieprawidłowy login lub hasło. Spróbuj ponownie.');
+          setError('Nieprawidłowy login lub hasło. Spróbuj ponownie.');
         }
       }
     } catch {
+      const storedCustomPass = typeof window !== 'undefined' ? localStorage.getItem('rysie_custom_password') : null;
+      const expectedPass = storedCustomPass || DEFAULT_AUTH_CREDENTIALS.password;
       if (
         login.trim().toLowerCase() === DEFAULT_AUTH_CREDENTIALS.login.toLowerCase() &&
-        password.trim() === DEFAULT_AUTH_CREDENTIALS.password
+        password.trim() === expectedPass
       ) {
         sessionStorage.setItem('rysie_session', JSON.stringify({ user: login, time: Date.now() }));
         onLoginSuccess(login);
       } else {
-        setError('Błąd połączenia. Sprawdź dane logowania.');
+        setError('Nieprawidłowy login lub hasło. Spróbuj ponownie.');
       }
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleFillDemo = () => {
-    setLogin(DEFAULT_AUTH_CREDENTIALS.login);
-    setPassword(DEFAULT_AUTH_CREDENTIALS.password);
-    setError(null);
   };
 
   return (
@@ -182,23 +181,6 @@ export default function LoginScreen({ onLoginSuccess, theme, onToggleTheme }: Lo
               )}
             </button>
           </form>
-
-          {/* Quick preset helper */}
-          <div className="mt-6 pt-5 border-t border-slate-200 dark:border-zinc-800/80 text-center">
-            <p className="text-xs text-slate-500 dark:text-zinc-400 mb-2 font-medium">
-              Domyślne dane dostępowe dla organizatorów:
-            </p>
-            <button
-              type="button"
-              onClick={handleFillDemo}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800/80 dark:hover:bg-zinc-700/80 border border-slate-200 dark:border-zinc-700 text-xs text-slate-700 dark:text-zinc-300 transition-all active:scale-95"
-            >
-              <CheckCircle2 className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
-              <span>
-                Login: <strong className="text-amber-600 dark:text-amber-300">organizator</strong> / Hasło: <strong className="text-amber-600 dark:text-amber-300">rysie2026</strong>
-              </span>
-            </button>
-          </div>
         </div>
 
         {/* Footer info */}
