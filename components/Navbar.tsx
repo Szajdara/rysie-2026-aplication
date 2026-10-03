@@ -58,7 +58,7 @@ export default function Navbar({
                 <span className="font-black text-lg sm:text-xl tracking-tight text-slate-900 dark:text-white">
                   RYSIE <span className="text-blue-600 dark:text-blue-400">2026</span>
                 </span>
-                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/30">
+                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/30">
                   Panel Komisji
                 </span>
               </div>
@@ -94,11 +94,11 @@ export default function Navbar({
         <div className="flex items-center justify-between md:justify-end gap-2 sm:gap-3 flex-wrap">
           {/* Desktop Stats Badges */}
           <div className="hidden lg:flex items-center gap-2">
-            <div className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-xs text-slate-700 dark:text-zinc-300 flex items-center gap-2">
+            <div className="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-xs text-slate-700 dark:text-zinc-300 flex items-center gap-2">
               <span className="text-slate-500 dark:text-zinc-500">Oddanych głosów:</span>
               <span className="font-bold text-blue-600 dark:text-blue-400 text-sm">{totalVotes}</span>
             </div>
-            <div className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-xs text-slate-700 dark:text-zinc-300 flex items-center gap-2">
+            <div className="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-xs text-slate-700 dark:text-zinc-300 flex items-center gap-2">
               <span className="text-slate-500 dark:text-zinc-500">Wpisanych kandydatur:</span>
               <span className="font-bold text-slate-900 dark:text-white text-sm">{totalTeachers}</span>
             </div>
@@ -110,10 +110,10 @@ export default function Navbar({
             <button
               onClick={onToggleTheme}
               title={theme === 'dark' ? 'Przełącz na tryb jasny' : 'Przełącz na tryb ciemny'}
-              className="hidden md:flex p-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 border border-slate-200 dark:border-zinc-800 text-slate-700 dark:text-zinc-300 transition-all items-center justify-center active:scale-95 shrink-0"
+              className="hidden md:flex p-2 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 border border-slate-200 dark:border-zinc-800 text-slate-700 dark:text-zinc-300 transition-all items-center justify-center active:scale-95 shrink-0"
             >
               {theme === 'dark' ? (
-                <Sun className="w-4 h-4 text-amber-400" />
+                <Sun className="w-4 h-4 text-sky-400" />
               ) : (
                 <Moon className="w-4 h-4 text-slate-700" />
               )}
@@ -124,7 +124,7 @@ export default function Navbar({
               onClick={onUndo}
               disabled={!canUndo}
               title="Cofnij ostatnie kliknięcie +/-"
-              className="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-medium bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 border border-slate-200 dark:border-zinc-800 text-slate-700 dark:text-zinc-300 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center gap-1.5 active:scale-95 shrink-0"
+              className="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg text-xs font-medium bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 border border-slate-200 dark:border-zinc-800 text-slate-700 dark:text-zinc-300 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center gap-1.5 active:scale-95 shrink-0"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Cofnij</span>
@@ -133,7 +133,7 @@ export default function Navbar({
             {/* Official Protocol button */}
             <button
               onClick={onOpenProtocol}
-              className="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 border border-slate-200 dark:border-zinc-700/80 text-slate-800 dark:text-zinc-200 transition-all flex items-center gap-1.5 active:scale-95 shrink-0"
+              className="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 border border-slate-200 dark:border-zinc-700/80 text-slate-800 dark:text-zinc-200 transition-all flex items-center gap-1.5 active:scale-95 shrink-0"
             >
               <FileText className="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" />
               <span>Protokół A4</span>
@@ -143,7 +143,7 @@ export default function Navbar({
             <button
               onClick={onOpenBackup}
               title="Kopia zapasowa, eksport i narzędzia"
-              className="p-1.5 sm:p-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 border border-slate-200 dark:border-zinc-800 text-slate-700 dark:text-zinc-300 transition-all flex items-center justify-center active:scale-95 shrink-0"
+              className="p-1.5 sm:p-2 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 border border-slate-200 dark:border-zinc-800 text-slate-700 dark:text-zinc-300 transition-all flex items-center justify-center active:scale-95 shrink-0"
             >
               <SlidersHorizontal className="w-4 h-4" />
             </button>
@@ -152,7 +152,7 @@ export default function Navbar({
             <button
               onClick={onLogout}
               title={`Zalogowano jako: ${user}. Kliknij, aby wylogować.`}
-              className="p-1.5 sm:p-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-red-50 dark:bg-zinc-900/80 dark:hover:bg-red-950/60 border border-slate-200 dark:border-zinc-800 hover:border-red-300 dark:hover:border-red-800/60 text-slate-500 hover:text-red-600 dark:text-zinc-400 dark:hover:text-red-300 transition-all flex items-center justify-center active:scale-95 shrink-0"
+              className="p-1.5 sm:p-2 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-red-50 dark:bg-zinc-900/80 dark:hover:bg-red-950/60 border border-slate-200 dark:border-zinc-800 hover:border-red-300 dark:hover:border-red-800/60 text-slate-500 hover:text-red-600 dark:text-zinc-400 dark:hover:text-red-300 transition-all flex items-center justify-center active:scale-95 shrink-0"
             >
               <LogOut className="w-4 h-4" />
             </button>

@@ -61,7 +61,7 @@ export default function TeacherRow({
 
   return (
     <div
-      className={`rounded-2xl p-3.5 border transition-all duration-200 ${containerStyle} ${
+      className={`rounded-xl p-3.5 border transition-all duration-200 ${containerStyle} ${
         justBumped ? 'scale-[1.01]' : ''
       }`}
     >
@@ -70,7 +70,7 @@ export default function TeacherRow({
         <div className="flex items-center gap-2 min-w-0 flex-1">
           {/* Rank Badge */}
           <div
-            className={`shrink-0 flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-xs tracking-tight ${badgeStyle}`}
+            className={`shrink-0 flex items-center gap-1 px-2 py-0.5 rounded-md text-xs tracking-tight ${badgeStyle}`}
           >
             {isWinner ? (
               <>
@@ -111,12 +111,12 @@ export default function TeacherRow({
         {/* Delete Confirmation or Trash Icon */}
         <div className="shrink-0">
           {showConfirmDelete ? (
-            <div className="flex items-center gap-1 bg-red-100 dark:bg-red-950/90 border border-red-300 dark:border-red-700 rounded-xl p-1 animate-fadeIn">
+            <div className="flex items-center gap-1 bg-red-100 dark:bg-red-950/90 border border-red-300 dark:border-red-700 rounded-lg p-1 animate-fadeIn">
               <button
                 type="button"
                 onClick={() => onDelete(teacher.id)}
                 title="Potwierdź usunięcie"
-                className="w-7 h-7 rounded-lg bg-red-600 hover:bg-red-500 text-white flex items-center justify-center active:scale-90 transition-transform"
+                className="w-7 h-7 rounded-md bg-red-600 hover:bg-red-500 text-white flex items-center justify-center active:scale-90 transition-transform"
               >
                 <Check className="w-3.5 h-3.5" />
               </button>
@@ -124,7 +124,7 @@ export default function TeacherRow({
                 type="button"
                 onClick={() => setShowConfirmDelete(false)}
                 title="Anuluj"
-                className="w-7 h-7 rounded-lg bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 flex items-center justify-center active:scale-90 transition-transform"
+                className="w-7 h-7 rounded-md bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 flex items-center justify-center active:scale-90 transition-transform"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -134,7 +134,7 @@ export default function TeacherRow({
               type="button"
               onClick={() => setShowConfirmDelete(true)}
               title="Usuń nauczyciela z tej kategorii"
-              className="w-7 h-7 rounded-lg text-slate-400 dark:text-zinc-500 hover:text-red-500 hover:bg-red-50 dark:hover:text-red-400 dark:hover:bg-red-500/15 flex items-center justify-center transition-colors"
+              className="w-7 h-7 rounded-md text-slate-400 dark:text-zinc-500 hover:text-red-500 hover:bg-red-50 dark:hover:text-red-400 dark:hover:bg-red-500/15 flex items-center justify-center transition-colors"
             >
               <Trash2 className="w-3.5 h-3.5" />
             </button>
@@ -171,7 +171,7 @@ export default function TeacherRow({
             onClick={handleMinus}
             disabled={teacher.votes <= 0}
             title="Odejmij 1 głos"
-            className="w-10 h-10 rounded-xl bg-slate-200 hover:bg-slate-300 active:bg-slate-400 text-slate-800 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:active:bg-zinc-900 dark:text-zinc-200 disabled:opacity-25 disabled:pointer-events-none border border-slate-300 dark:border-zinc-700/80 flex items-center justify-center font-bold text-lg active:scale-90 transition-all select-none shadow-sm"
+            className="w-10 h-10 rounded-lg bg-slate-200 hover:bg-slate-300 active:bg-slate-400 text-slate-800 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:active:bg-zinc-900 dark:text-zinc-200 disabled:opacity-25 disabled:pointer-events-none border border-slate-300 dark:border-zinc-700/80 flex items-center justify-center font-bold text-lg active:scale-90 transition-all select-none shadow-sm"
           >
             <Minus className="w-4 h-4" />
           </button>
@@ -194,7 +194,7 @@ export default function TeacherRow({
             type="button"
             onClick={() => handlePlus(1)}
             title="Dodaj 1 głos"
-            className={`w-10 h-10 rounded-xl flex items-center justify-center font-extrabold text-lg active:scale-90 transition-all shadow-md select-none ${
+            className={`w-10 h-10 rounded-lg flex items-center justify-center font-extrabold text-lg active:scale-90 transition-all shadow-md select-none ${
               isWinner
                 ? 'bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-black shadow-amber-500/25'
                 : isNominee
@@ -210,7 +210,7 @@ export default function TeacherRow({
             type="button"
             onClick={() => handlePlus(5)}
             title="Dodaj 5 głosów naraz"
-            className="px-2.5 h-10 rounded-xl bg-slate-200 hover:bg-slate-300 active:bg-slate-400 text-slate-800 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:active:bg-zinc-900 text-xs font-bold dark:text-zinc-300 dark:hover:text-white border border-slate-300 dark:border-zinc-700/70 flex items-center justify-center active:scale-90 transition-all select-none"
+            className="px-2.5 h-10 rounded-lg bg-slate-200 hover:bg-slate-300 active:bg-slate-400 text-slate-800 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:active:bg-zinc-900 text-xs font-bold dark:text-zinc-300 dark:hover:text-white border border-slate-300 dark:border-zinc-700/70 flex items-center justify-center active:scale-90 transition-all select-none"
           >
             +5
           </button>

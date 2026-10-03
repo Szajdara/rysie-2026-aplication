@@ -50,7 +50,7 @@ export default function LoginScreen({ onLoginSuccess, theme, onToggleTheme }: Lo
         <button
           onClick={onToggleTheme}
           title={theme === 'dark' ? 'Przełącz na tryb jasny' : 'Przełącz na tryb ciemny'}
-          className="p-2.5 rounded-2xl bg-white/80 dark:bg-zinc-900/80 border border-slate-200 dark:border-zinc-800 text-slate-700 dark:text-zinc-300 shadow-md backdrop-blur-md active:scale-95 transition-all"
+          className="p-2 rounded-lg bg-white/80 dark:bg-zinc-900/80 border border-slate-200 dark:border-zinc-800 text-slate-700 dark:text-zinc-300 shadow-md backdrop-blur-md active:scale-95 transition-all"
         >
           {theme === 'dark' ? (
             <Sun className="w-5 h-5 text-sky-400" />
@@ -81,17 +81,17 @@ export default function LoginScreen({ onLoginSuccess, theme, onToggleTheme }: Lo
           <p className="text-slate-600 dark:text-zinc-400 text-sm mt-1.5 font-medium">
             Plebiscyt Nauczycielski • Panel Komisji Skrutacyjnej
           </p>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 mt-3 rounded-full text-xs font-semibold bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/30">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 mt-3 rounded-md text-xs font-semibold bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/30">
             <Sparkles className="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" />
             <span>Dostęp chroniony hasłem</span>
           </div>
         </div>
 
         {/* Login Card */}
-        <div className="bg-white/90 dark:bg-zinc-900/90 border border-slate-200 dark:border-zinc-800 backdrop-blur-xl rounded-3xl p-6 sm:p-8 shadow-2xl shadow-slate-300/50 dark:shadow-black/80">
+        <div className="bg-white/90 dark:bg-zinc-900/90 border border-slate-200 dark:border-zinc-800 backdrop-blur-xl rounded-xl p-6 sm:p-8 shadow-2xl shadow-slate-300/50 dark:shadow-black/80">
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
-              <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-300 text-sm animate-shake">
+              <div className="flex items-start gap-3 p-3.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-300 text-sm animate-shake">
                 <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 text-red-500 dark:text-red-400" />
                 <span>{error}</span>
               </div>
@@ -113,7 +113,7 @@ export default function LoginScreen({ onLoginSuccess, theme, onToggleTheme }: Lo
                   required
                   autoFocus
                   autoComplete="username"
-                  className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-zinc-950/80 border border-slate-300 dark:border-zinc-700/80 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 focus:bg-white dark:focus:bg-zinc-900 transition-all text-base"
+                  className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-zinc-950/80 border border-slate-300 dark:border-zinc-700/80 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 focus:bg-white dark:focus:bg-zinc-900 transition-all text-base"
                 />
               </div>
             </div>
@@ -133,7 +133,7 @@ export default function LoginScreen({ onLoginSuccess, theme, onToggleTheme }: Lo
                   placeholder="Wpisz hasło..."
                   required
                   autoComplete="current-password"
-                  className="w-full pl-11 pr-11 py-3 bg-slate-50 dark:bg-zinc-950/80 border border-slate-300 dark:border-zinc-700/80 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 focus:bg-white dark:focus:bg-zinc-900 transition-all text-base"
+                  className="w-full pl-11 pr-11 py-3 bg-slate-50 dark:bg-zinc-950/80 border border-slate-300 dark:border-zinc-700/80 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 focus:bg-white dark:focus:bg-zinc-900 transition-all text-base"
                 />
                 <button
                   type="button"
@@ -148,7 +148,7 @@ export default function LoginScreen({ onLoginSuccess, theme, onToggleTheme }: Lo
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 px-4 rounded-2xl font-bold text-white bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-lg shadow-blue-500/25 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base mt-2"
+              className="w-full py-3.5 px-4 rounded-lg font-bold text-white bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-lg shadow-blue-500/25 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base mt-2"
             >
               {loading ? (
                 <>
