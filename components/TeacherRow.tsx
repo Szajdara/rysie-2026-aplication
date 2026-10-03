@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { RankedTeacher } from '@/lib/types';
+import { formatVotesCount } from '@/lib/ranking';
 import { Plus, Minus, Trophy, Medal, Trash2, Check, X } from 'lucide-react';
 
 interface TeacherRowProps {
@@ -157,7 +158,7 @@ export default function TeacherRow({
                   : 'text-slate-500 dark:text-zinc-400'
               }`}
             >
-              {teacher.votes} {teacher.votes === 1 ? 'głos' : 'głosy'}
+              {formatVotesCount(teacher.votes)}
             </span>
           )}
         </div>

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { CategoryDefinition, TeacherVote } from '@/lib/types';
-import { calculateRankings, getCategoryLeader } from '@/lib/ranking';
+import { calculateRankings, getCategoryLeader, formatVotesCount, formatTeacherName } from '@/lib/ranking';
 import TeacherRow from './TeacherRow';
 import {
   Zap,
@@ -71,8 +71,10 @@ export default function CategoryCard({
       return;
     }
 
+    const formatted = formatTeacherName(trimmed);
+
     const alreadyExists = teachers.some(
-      (t) => t.name.toLowerCase() === trimmed.toLowerCase()
+      (t) => t.name.toLowerCase() === formatted.toLowerCase()
     );
 
     if (alreadyExists) {
@@ -81,7 +83,7 @@ export default function CategoryCard({
     }
 
     setInputError(null);
-    onAddTeacher(category.id, trimmed);
+    onAddTeacher(category.id, formatted);
     setNewTeacherName('');
   };
 
@@ -139,7 +141,7 @@ export default function CategoryCard({
             </span>
           </div>
           <span className="font-extrabold text-amber-600 dark:text-amber-400 ml-2 shrink-0">
-            {leaderInfo.maxVotes} {leaderInfo.maxVotes === 1 ? 'głos' : 'głosy'}
+            {formatVotesCount(leaderInfo.maxVotes)}
           </span>
         </div>
       )}
@@ -147,7 +149,7 @@ export default function CategoryCard({
       {/* Add Teacher Input Form */}
       <form onSubmit={handleAddSubmit} className="my-3">
         <div className="flex items-center gap-2">
-          <div className="relative flex-1">
+          <div className="relative flex-1 min-w-0">
             <input
               type="text"
               list={datalistId}
@@ -156,8 +158,8 @@ export default function CategoryCard({
                 setNewTeacherName(e.target.value);
                 if (inputError) setInputError(null);
               }}
-              placeholder="Wpisz imię i nazwisko nauczyciela..."
-              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-zinc-950/90 border border-slate-300 dark:border-zinc-700/80 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 focus:bg-white transition-all"
+              placeholder="Imię i nazwisko nauczyciela"
+              className="w-full px-3 py-2 sm:px-3.5 sm:py-2.5 bg-slate-50 dark:bg-zinc-950/90 border border-slate-300 dark:border-zinc-700/80 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 focus:bg-white transition-all"
             />
             {/* Suggestions datalist */}
             <datalist id={datalistId}>
@@ -168,7 +170,7 @@ export default function CategoryCard({
           </div>
           <button
             type="submit"
-            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 font-bold text-xs sm:text-sm text-zinc-950 flex items-center gap-1.5 shadow-md shadow-amber-500/20 active:scale-95 transition-all shrink-0"
+            className="px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 font-bold text-xs sm:text-sm text-zinc-950 flex items-center gap-1 sm:gap-1.5 shadow-md shadow-amber-500/20 active:scale-95 transition-all shrink-0"
           >
             <UserPlus className="w-4 h-4" />
             <span>Dodaj</span>

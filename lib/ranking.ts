@@ -57,3 +57,26 @@ export function getCategoryLeader(teachers: TeacherVote[]): { leaderName: string
     maxVotes: winners[0].votes,
   };
 }
+
+// Correct Polish inflection for votes (1 głos, 2 głosy, 5 głosów, 13 głosów, 22 głosy, etc.)
+export function formatVotesCount(votes: number): string {
+  if (votes === 1) return '1 głos';
+  const lastDigit = votes % 10;
+  const lastTwoDigits = votes % 100;
+  if (lastTwoDigits >= 12 && lastTwoDigits <= 14) {
+    return `${votes} głosów`;
+  }
+  if (lastDigit >= 2 && lastDigit <= 4) {
+    return `${votes} głosy`;
+  }
+  return `${votes} głosów`;
+}
+
+// Auto-capitalize teacher names (e.g. "justyna andrzejak" -> "Justyna Andrzejak")
+export function formatTeacherName(name: string): string {
+  return name
+    .trim()
+    .split(/\s+/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
