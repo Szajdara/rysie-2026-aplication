@@ -184,7 +184,7 @@ export default function CategoryCard({
       </form>
 
       {/* Teachers List */}
-      <div className="flex-1 space-y-2 mt-1 overflow-y-auto max-h-[420px] pr-1">
+      <div className="space-y-2.5 mt-2">
         {rankedTeachers.length === 0 ? (
           <div className="text-center py-8 px-4 rounded-xl border border-dashed border-zinc-800 text-zinc-500 text-xs">
             <Users className="w-7 h-7 mx-auto mb-2 text-zinc-600" />
