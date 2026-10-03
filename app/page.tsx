@@ -22,7 +22,7 @@ import LoginScreen from '@/components/LoginScreen';
 
 export default function HomePage() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  const [currentUser, setCurrentUser] = useState<string>('organizator');
+  const [currentUser, setCurrentUser] = useState<string>('organizator_rysi_2026');
   const [votesData, setVotesData] = useState<VotesData>(INITIAL_VOTES_DATA);
   const [selectedTab, setSelectedTab] = useState<CategoryId | 'all'>('all');
   const [historyStack, setHistoryStack] = useState<HistoryAction[]>([]);

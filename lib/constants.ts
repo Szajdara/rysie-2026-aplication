@@ -67,8 +67,8 @@ export const INITIAL_VOTES_DATA: VotesData = {
 };
 
 export const DEFAULT_AUTH_CREDENTIALS = {
-  login: 'organizator',
-  password: 'rysie2026',
+  login: 'organizator_rysi_2026',
+  password: 'Rysie26org@niz@tor',
 };
 
 export const STORAGE_KEY_VOTES = 'rysie_2026_votes_data_v1';

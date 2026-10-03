@@ -7,7 +7,10 @@ export async function POST(req: NextRequest) {
     const { login, password } = body;
 
     const expectedLogin = process.env.ADMIN_LOGIN || DEFAULT_AUTH_CREDENTIALS.login;
-    const expectedPassword = process.env.ADMIN_PASSWORD || DEFAULT_AUTH_CREDENTIALS.password;
+    const expectedPassword =
+      process.env.ADMIN_PASSWORD ||
+      process.env.organizator_rysi_2026 ||
+      DEFAULT_AUTH_CREDENTIALS.password;
 
     if (
       login &&
