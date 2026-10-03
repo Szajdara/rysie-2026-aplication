@@ -53,7 +53,7 @@ export default function LoginScreen({ onLoginSuccess, theme, onToggleTheme }: Lo
           className="p-2.5 rounded-2xl bg-white/80 dark:bg-zinc-900/80 border border-slate-200 dark:border-zinc-800 text-slate-700 dark:text-zinc-300 shadow-md backdrop-blur-md active:scale-95 transition-all"
         >
           {theme === 'dark' ? (
-            <Sun className="w-5 h-5 text-amber-400" />
+            <Sun className="w-5 h-5 text-sky-400" />
           ) : (
             <Moon className="w-5 h-5 text-slate-700" />
           )}
@@ -61,24 +61,28 @@ export default function LoginScreen({ onLoginSuccess, theme, onToggleTheme }: Lo
       </div>
 
       {/* Background ambient lighting */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-500/15 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative w-full max-w-md">
-        {/* Decorative top badge */}
+        {/* Decorative top badge with official Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-amber-400 via-amber-500 to-yellow-600 shadow-[0_0_40px_rgba(245,158,11,0.35)] p-0.5 mb-4 transform hover:scale-105 transition-transform duration-300">
-            <div className="w-full h-full bg-white dark:bg-zinc-950 rounded-[22px] flex items-center justify-center">
-              <Award className="w-10 h-10 text-amber-500 dark:text-amber-400" />
+          <div className="inline-flex items-center justify-center w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-to-br from-blue-600 via-sky-400 to-indigo-600 shadow-[0_0_35px_rgba(59,130,246,0.35)] p-1 mb-4 transform hover:scale-105 transition-transform duration-300">
+            <div className="w-full h-full bg-white rounded-full overflow-hidden flex items-center justify-center p-1">
+              <img
+                src="/logo.png"
+                alt="Logo Rysie 2026"
+                className="w-full h-full object-contain"
+              />
             </div>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900 dark:text-white flex items-center justify-center gap-2">
-            RYSIE <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600">2026</span>
+            RYSIE <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-sky-500 to-indigo-600">2026</span>
           </h1>
           <p className="text-slate-600 dark:text-zinc-400 text-sm mt-1.5 font-medium">
             Plebiscyt Nauczycielski • Panel Komisji Skrutacyjnej
           </p>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 mt-3 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30">
-            <Sparkles className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 mt-3 rounded-full text-xs font-semibold bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/30">
+            <Sparkles className="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" />
             <span>Dostęp chroniony hasłem</span>
           </div>
         </div>
@@ -109,7 +113,7 @@ export default function LoginScreen({ onLoginSuccess, theme, onToggleTheme }: Lo
                   required
                   autoFocus
                   autoComplete="username"
-                  className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-zinc-950/80 border border-slate-300 dark:border-zinc-700/80 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 focus:bg-white dark:focus:bg-zinc-900 transition-all text-base"
+                  className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-zinc-950/80 border border-slate-300 dark:border-zinc-700/80 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 focus:bg-white dark:focus:bg-zinc-900 transition-all text-base"
                 />
               </div>
             </div>
@@ -129,7 +133,7 @@ export default function LoginScreen({ onLoginSuccess, theme, onToggleTheme }: Lo
                   placeholder="Wpisz hasło..."
                   required
                   autoComplete="current-password"
-                  className="w-full pl-11 pr-11 py-3 bg-slate-50 dark:bg-zinc-950/80 border border-slate-300 dark:border-zinc-700/80 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 focus:bg-white dark:focus:bg-zinc-900 transition-all text-base"
+                  className="w-full pl-11 pr-11 py-3 bg-slate-50 dark:bg-zinc-950/80 border border-slate-300 dark:border-zinc-700/80 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 focus:bg-white dark:focus:bg-zinc-900 transition-all text-base"
                 />
                 <button
                   type="button"
@@ -144,11 +148,11 @@ export default function LoginScreen({ onLoginSuccess, theme, onToggleTheme }: Lo
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 px-4 rounded-2xl font-bold text-black bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 shadow-lg shadow-amber-500/25 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base mt-2"
+              className="w-full py-3.5 px-4 rounded-2xl font-bold text-white bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-lg shadow-blue-500/25 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base mt-2"
             >
               {loading ? (
                 <>
-                  <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   <span>Weryfikacja...</span>
                 </>
               ) : (

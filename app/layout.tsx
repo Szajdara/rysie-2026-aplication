@@ -5,7 +5,8 @@ export const metadata: Metadata = {
   title: 'Rysie 2026 – Oficjalny Panel Liczenia Głosów',
   description: 'Aplikacja do zliczania głosów w plebiscycie nauczycielskim Rysie 2026. Złoty zwycięzca i srebrni nominowani w 6 kategoriach filmowych.',
   icons: {
-    icon: '/favicon.ico',
+    icon: '/logo.png',
+    apple: '/logo.png',
   },
 };
 
@@ -44,7 +45,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen transition-colors duration-200 antialiased selection:bg-amber-500 selection:text-black">
+      <body className="min-h-screen transition-colors duration-200 antialiased selection:bg-blue-600 selection:text-white">
         {children}
       </body>
     </html>

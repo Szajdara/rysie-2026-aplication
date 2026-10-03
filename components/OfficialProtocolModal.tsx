@@ -48,7 +48,7 @@ export default function OfficialProtocolModal({
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrint}
-              className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-xl text-sm flex items-center gap-2 shadow-md transition-all active:scale-95"
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-sm flex items-center gap-2 shadow-md shadow-blue-500/20 transition-all active:scale-95"
             >
               <Printer className="w-4 h-4" />
               <span>Drukuj / Zapisz jako PDF</span>
@@ -65,14 +65,19 @@ export default function OfficialProtocolModal({
         {/* Printable Document Sheet */}
         <div className="print-content space-y-6 text-zinc-900">
           {/* Header */}
-          <div className="text-center pb-4 border-b-2 border-zinc-900">
+          <div className="text-center pb-4 border-b-2 border-zinc-900 flex flex-col items-center">
+            <img
+              src="/logo.png"
+              alt="Logo Rysie 2026"
+              className="w-16 h-16 object-contain mb-2 rounded-full"
+            />
             <p className="text-xs uppercase tracking-widest text-zinc-500 font-semibold mb-1">
               DOKUMENTACJA OFICJALNA
             </p>
             <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight">
               Protokół Komisji Skrutacyjnej
             </h1>
-            <p className="text-base font-bold text-amber-800 mt-1">
+            <p className="text-base font-bold text-blue-900 mt-1">
               Plebiscyt Nauczycielski „RYSIE 2026”
             </p>
             <p className="text-xs text-zinc-500 mt-1">

@@ -192,7 +192,7 @@ export default function BackupModal({
               onClick={handleExportJSON}
               className="px-3.5 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-800 dark:text-zinc-200 text-xs font-semibold flex items-center gap-1.5 shrink-0 transition-colors"
             >
-              <Download className="w-4 h-4 text-amber-500 dark:text-amber-400" />
+              <Download className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               <span>Zapisz JSON</span>
             </button>
           </div>
@@ -241,7 +241,7 @@ export default function BackupModal({
           {/* Change Password Card */}
           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800">
             <div className="flex items-center gap-2 text-slate-900 dark:text-zinc-100 font-bold text-sm">
-              <KeyRound className="w-4 h-4 text-amber-500" />
+              <KeyRound className="w-4 h-4 text-blue-500" />
               <span>Zmień hasło dostępu do panelu</span>
             </div>
             <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
@@ -253,11 +253,11 @@ export default function BackupModal({
                 value={newPasswordInput}
                 onChange={(e) => setNewPasswordInput(e.target.value)}
                 placeholder="Wpisz nowe hasło..."
-                className="flex-1 px-3.5 py-2 bg-white dark:bg-zinc-950 border border-slate-300 dark:border-zinc-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                className="flex-1 px-3.5 py-2 bg-white dark:bg-zinc-950 border border-slate-300 dark:border-zinc-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
               />
               <button
                 type="submit"
-                className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 font-bold text-xs text-black transition-all active:scale-95 shrink-0"
+                className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 font-bold text-xs text-white transition-all active:scale-95 shrink-0 shadow-sm shadow-blue-500/20"
               >
                 Zapisz hasło
               </button>

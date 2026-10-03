@@ -44,17 +44,21 @@ export default function Navbar({
         {/* Brand and stats */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-yellow-300 p-0.5 shadow-md shadow-amber-500/20 flex items-center justify-center">
-              <div className="w-full h-full bg-zinc-950 rounded-[10px] flex items-center justify-center">
-                <Award className="w-5 h-5 text-amber-400" />
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full p-0.5 bg-gradient-to-tr from-blue-600 via-sky-400 to-indigo-600 shadow-md shadow-blue-500/25 flex items-center justify-center shrink-0">
+              <div className="w-full h-full bg-white rounded-full overflow-hidden flex items-center justify-center p-0.5">
+                <img
+                  src="/logo.png"
+                  alt="Logo Rysie 2026"
+                  className="w-full h-full object-contain"
+                />
               </div>
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-black text-lg sm:text-xl tracking-tight text-slate-900 dark:text-white">
-                  RYSIE <span className="text-amber-500 dark:text-amber-400">2026</span>
+                  RYSIE <span className="text-blue-600 dark:text-blue-400">2026</span>
                 </span>
-                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30">
+                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/30">
                   Panel Komisji
                 </span>
               </div>
@@ -72,15 +76,15 @@ export default function Navbar({
               className="p-1.5 rounded-lg bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-slate-700 dark:text-zinc-300 active:scale-95 transition-all"
             >
               {theme === 'dark' ? (
-                <Sun className="w-4 h-4 text-amber-400" />
+                <Sun className="w-4 h-4 text-sky-400" />
               ) : (
                 <Moon className="w-4 h-4 text-slate-700" />
               )}
             </button>
             <div className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-slate-800 dark:text-zinc-300 flex items-center gap-1.5 font-medium">
-              <Sparkles className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
+              <Sparkles className="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" />
               <span>
-                <strong className="text-amber-600 dark:text-amber-400 font-bold">{totalVotes}</strong> gł.
+                <strong className="text-blue-600 dark:text-blue-400 font-bold">{totalVotes}</strong> gł.
               </span>
             </div>
           </div>
@@ -92,7 +96,7 @@ export default function Navbar({
           <div className="hidden lg:flex items-center gap-2">
             <div className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-xs text-slate-700 dark:text-zinc-300 flex items-center gap-2">
               <span className="text-slate-500 dark:text-zinc-500">Oddanych głosów:</span>
-              <span className="font-bold text-amber-600 dark:text-amber-400 text-sm">{totalVotes}</span>
+              <span className="font-bold text-blue-600 dark:text-blue-400 text-sm">{totalVotes}</span>
             </div>
             <div className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-xs text-slate-700 dark:text-zinc-300 flex items-center gap-2">
               <span className="text-slate-500 dark:text-zinc-500">Wpisanych kandydatur:</span>

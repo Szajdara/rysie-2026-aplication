@@ -40,7 +40,7 @@ export default function CategoryTabs({
           onClick={() => onSelectTab('all')}
           className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all shrink-0 active:scale-95 ${
             selectedTab === 'all'
-              ? 'bg-amber-500 text-black font-bold shadow-md shadow-amber-500/20'
+              ? 'bg-blue-600 text-white font-bold shadow-md shadow-blue-500/25'
               : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-800'
           }`}
         >
@@ -49,7 +49,7 @@ export default function CategoryTabs({
           <span
             className={`px-1.5 py-0.2 rounded-full text-[10px] ${
               selectedTab === 'all'
-                ? 'bg-black/20 text-black font-extrabold'
+                ? 'bg-white/20 text-white font-extrabold'
                 : 'bg-slate-200 text-slate-600 dark:bg-zinc-800 dark:text-zinc-400'
             }`}
           >
@@ -69,16 +69,16 @@ export default function CategoryTabs({
               onClick={() => onSelectTab(cat.id)}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all shrink-0 active:scale-95 ${
                 isSelected
-                  ? 'bg-amber-400 text-black font-bold shadow-md shadow-amber-500/20'
+                  ? 'bg-blue-600 text-white font-bold shadow-md shadow-blue-500/25'
                   : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 dark:bg-zinc-900/90 dark:hover:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-800/80'
               }`}
             >
-              <Icon className={`w-3.5 h-3.5 ${isSelected ? 'text-black' : 'text-amber-500 dark:text-amber-400'}`} />
+              <Icon className={`w-3.5 h-3.5 ${isSelected ? 'text-white' : 'text-blue-500 dark:text-blue-400'}`} />
               <span>{cat.shortTitle}</span>
               <span
                 className={`px-1.5 py-0.2 rounded-full text-[10px] ${
                   isSelected
-                    ? 'bg-black/20 text-black font-extrabold'
+                    ? 'bg-white/20 text-white font-extrabold'
                     : 'bg-slate-200 text-slate-600 dark:bg-zinc-800 dark:text-zinc-400'
                 }`}
               >

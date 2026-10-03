@@ -199,7 +199,7 @@ export default function TeacherRow({
                 ? 'bg-amber-400 hover:bg-amber-300 active:bg-amber-500 text-black shadow-amber-500/25'
                 : isNominee
                 ? 'bg-slate-300 hover:bg-slate-200 active:bg-slate-400 dark:bg-slate-200 dark:hover:bg-white dark:active:bg-slate-300 text-zinc-950 shadow-slate-400/20'
-                : 'bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-black shadow-amber-500/10'
+                : 'bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white shadow-blue-500/20'
             }`}
           >
             <Plus className="w-5 h-5" />
