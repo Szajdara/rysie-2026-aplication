@@ -1,12 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { VotesData } from '@/lib/types';
 import { INITIAL_VOTES_DATA } from '@/lib/constants';
+import { verifySignedSession } from '@/lib/auth-server';
 
-// In-memory cache for serverless instance lifetime
 let cachedVotes: VotesData | null = null;
 let lastUpdated: number = Date.now();
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  // Cybersecurity verification: only authenticated organizers can read votes
+  const token = req.cookies.get('rysie_auth_session')?.value;
+  const auth = verifySignedSession(token);
+
+  if (!auth.valid) {
+    return NextResponse.json({ error: 'Nieautoryzowany dostęp' }, { status: 401 });
+  }
+
   const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
   const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
 
@@ -38,6 +46,14 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  // Cybersecurity verification: only authenticated organizers can write/modify votes
+  const token = req.cookies.get('rysie_auth_session')?.value;
+  const auth = verifySignedSession(token);
+
+  if (!auth.valid) {
+    return NextResponse.json({ error: 'Nieautoryzowany dostęp' }, { status: 401 });
+  }
+
   try {
     const body = await req.json();
     const { votes } = body;

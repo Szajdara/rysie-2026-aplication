@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { Lock, User, Eye, EyeOff, Award, Sparkles, AlertCircle, Sun, Moon } from 'lucide-react';
-import { DEFAULT_AUTH_CREDENTIALS } from '@/lib/constants';
 
 interface LoginScreenProps {
   onLoginSuccess: (user: string) => void;
@@ -31,35 +30,14 @@ export default function LoginScreen({ onLoginSuccess, theme, onToggleTheme }: Lo
 
       const data = await res.json();
 
-      const storedCustomPass = typeof window !== 'undefined' ? localStorage.getItem('rysie_custom_password') : null;
-      const expectedPass = storedCustomPass || DEFAULT_AUTH_CREDENTIALS.password;
-
-      if (res.ok && data.success && (!storedCustomPass || password.trim() === storedCustomPass)) {
+      if (res.ok && data.success) {
         sessionStorage.setItem('rysie_session', JSON.stringify({ user: data.user, time: Date.now() }));
         onLoginSuccess(data.user);
       } else {
-        if (
-          login.trim().toLowerCase() === DEFAULT_AUTH_CREDENTIALS.login.toLowerCase() &&
-          password.trim() === expectedPass
-        ) {
-          sessionStorage.setItem('rysie_session', JSON.stringify({ user: login, time: Date.now() }));
-          onLoginSuccess(login);
-        } else {
-          setError('Nieprawidłowy login lub hasło. Spróbuj ponownie.');
-        }
+        setError(data.message || 'Nieprawidłowy login lub hasło. Spróbuj ponownie.');
       }
     } catch {
-      const storedCustomPass = typeof window !== 'undefined' ? localStorage.getItem('rysie_custom_password') : null;
-      const expectedPass = storedCustomPass || DEFAULT_AUTH_CREDENTIALS.password;
-      if (
-        login.trim().toLowerCase() === DEFAULT_AUTH_CREDENTIALS.login.toLowerCase() &&
-        password.trim() === expectedPass
-      ) {
-        sessionStorage.setItem('rysie_session', JSON.stringify({ user: login, time: Date.now() }));
-        onLoginSuccess(login);
-      } else {
-        setError('Nieprawidłowy login lub hasło. Spróbuj ponownie.');
-      }
+      setError('Błąd połączenia z serwerem logowania. Spróbuj ponownie.');
     } finally {
       setLoading(false);
     }
