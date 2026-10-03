@@ -109,7 +109,7 @@ export default function LoginScreen({ onLoginSuccess, theme, onToggleTheme }: Lo
                   required
                   autoFocus
                   autoComplete="username"
-                  className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-zinc-950/80 border border-slate-300 dark:border-zinc-700/80 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 focus:bg-white transition-all text-base"
+                  className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-zinc-950/80 border border-slate-300 dark:border-zinc-700/80 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 focus:bg-white dark:focus:bg-zinc-900 transition-all text-base"
                 />
               </div>
             </div>
@@ -129,7 +129,7 @@ export default function LoginScreen({ onLoginSuccess, theme, onToggleTheme }: Lo
                   placeholder="Wpisz hasło..."
                   required
                   autoComplete="current-password"
-                  className="w-full pl-11 pr-11 py-3 bg-slate-50 dark:bg-zinc-950/80 border border-slate-300 dark:border-zinc-700/80 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 focus:bg-white transition-all text-base"
+                  className="w-full pl-11 pr-11 py-3 bg-slate-50 dark:bg-zinc-950/80 border border-slate-300 dark:border-zinc-700/80 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 focus:bg-white dark:focus:bg-zinc-900 transition-all text-base"
                 />
                 <button
                   type="button"

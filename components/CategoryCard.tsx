@@ -159,7 +159,7 @@ export default function CategoryCard({
                 if (inputError) setInputError(null);
               }}
               placeholder="Imię i nazwisko nauczyciela"
-              className="w-full px-3 py-2 sm:px-3.5 sm:py-2.5 bg-slate-50 dark:bg-zinc-950/90 border border-slate-300 dark:border-zinc-700/80 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 focus:bg-white transition-all"
+              className="w-full px-3 py-2 sm:px-3.5 sm:py-2.5 bg-slate-50 dark:bg-zinc-950 border border-slate-300 dark:border-zinc-700/80 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 focus:bg-white dark:focus:bg-zinc-900 transition-all"
             />
             {/* Suggestions datalist */}
             <datalist id={datalistId}>
