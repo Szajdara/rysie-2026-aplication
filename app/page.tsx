@@ -16,7 +16,6 @@ import {
 import Navbar from '@/components/Navbar';
 import CategoryTabs from '@/components/CategoryTabs';
 import CategoryCard from '@/components/CategoryCard';
-import GalaPresentationModal from '@/components/GalaPresentationModal';
 import OfficialProtocolModal from '@/components/OfficialProtocolModal';
 import BackupModal from '@/components/BackupModal';
 import LoginScreen from '@/components/LoginScreen';
@@ -32,7 +31,6 @@ export default function HomePage() {
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
   // Modals state
-  const [isGalaModalOpen, setIsGalaModalOpen] = useState(false);
   const [isProtocolModalOpen, setIsProtocolModalOpen] = useState(false);
   const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
 
@@ -377,7 +375,6 @@ export default function HomePage() {
         theme={theme}
         onToggleTheme={handleToggleTheme}
         onUndo={handleUndo}
-        onOpenGala={() => setIsGalaModalOpen(true)}
         onOpenProtocol={() => setIsProtocolModalOpen(true)}
         onOpenBackup={() => setIsBackupModalOpen(true)}
         onLogout={handleLogout}
@@ -443,12 +440,6 @@ export default function HomePage() {
       </main>
 
       {/* Modals */}
-      <GalaPresentationModal
-        isOpen={isGalaModalOpen}
-        onClose={() => setIsGalaModalOpen(false)}
-        votesData={votesData}
-      />
-
       <OfficialProtocolModal
         isOpen={isProtocolModalOpen}
         onClose={() => setIsProtocolModalOpen(false)}

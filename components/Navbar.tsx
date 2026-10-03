@@ -3,7 +3,6 @@
 import React from 'react';
 import {
   Award,
-  Trophy,
   FileText,
   RotateCcw,
   LogOut,
@@ -21,7 +20,6 @@ interface NavbarProps {
   theme: 'dark' | 'light';
   onToggleTheme: () => void;
   onUndo: () => void;
-  onOpenGala: () => void;
   onOpenProtocol: () => void;
   onOpenBackup: () => void;
   onLogout: () => void;
@@ -36,7 +34,6 @@ export default function Navbar({
   theme,
   onToggleTheme,
   onUndo,
-  onOpenGala,
   onOpenProtocol,
   onOpenBackup,
   onLogout,
@@ -127,15 +124,6 @@ export default function Navbar({
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Cofnij</span>
-            </button>
-
-            {/* Gala Presentation Mode button */}
-            <button
-              onClick={onOpenGala}
-              className="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold text-black bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 shadow-md shadow-amber-500/20 transition-all flex items-center gap-1.5 active:scale-95 shrink-0"
-            >
-              <Trophy className="w-4 h-4 text-black" />
-              <span>Tryb Gali</span>
             </button>
 
             {/* Official Protocol button */}

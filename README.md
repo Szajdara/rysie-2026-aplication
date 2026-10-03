@@ -28,9 +28,6 @@ Aplikacja została zaprojektowana pod kątem **wygodnej pracy na smartfonach** o
   - Autouzupełnianie nazwisk – jeśli nauczyciel został wpisany w jednej kategorii, w kolejnych pojawia się jako podpowiedź jednym kliknięciem.
 - ↩️ **Funkcja „Cofnij” (Undo)**:
   - Błyskawiczne cofnięcie pomyłkowego kliknięcia `+` lub `-`.
-- 🎭 **Interaktywny Tryb Gali (Prezentacja)**:
-  - Gotowy do wyświetlenia na rzutniku podczas apelu/gali!
-  - Prezentacja 2 Srebrnych Nominowanych, po czym spektakularne kliknięcie **„ODKRYJ ZWYCIĘZCĘ RYSIE 2026!”** z deszczem konfetti 🎉 i złotym pucharem 🏆.
 - 📄 **Oficjalny Protokół A4 (PDF / Druk)**:
   - Gotowy do wydruku dokument podsumowujący z tabelą wyników i miejscami na podpisy członków komisji skrutacyjnej.
 - 💾 **Kopia zapasowa i Eksport**:
