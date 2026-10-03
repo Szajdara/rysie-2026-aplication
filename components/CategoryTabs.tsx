@@ -24,7 +24,7 @@ export default function CategoryTabs({
   const totalAllVotes = CATEGORIES.reduce((acc, cat) => acc + getTotalVotes(cat.id), 0);
 
   return (
-    <div className="sticky top-[61px] sm:top-[69px] z-30 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md border-b border-slate-200 dark:border-zinc-800/80 py-2.5 px-4 sm:px-6 transition-colors">
+    <div className="sticky top-[95px] md:top-[68px] z-30 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md border-b border-slate-200 dark:border-zinc-800/80 py-2.5 px-4 sm:px-6 transition-colors">
       <div className="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth">
         {/* All categories pill */}
         <button
