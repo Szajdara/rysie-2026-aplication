@@ -12,6 +12,8 @@ import {
   AlertTriangle,
   CheckCircle2,
   KeyRound,
+  Cloud,
+  Database,
 } from 'lucide-react';
 
 interface BackupModalProps {
@@ -20,6 +22,7 @@ interface BackupModalProps {
   votesData: VotesData;
   onRestoreData: (restored: VotesData) => void;
   onResetAllData: () => void;
+  isCloudSynced?: boolean;
 }
 
 export default function BackupModal({
@@ -28,6 +31,7 @@ export default function BackupModal({
   votesData,
   onRestoreData,
   onResetAllData,
+  isCloudSynced = false,
 }: BackupModalProps) {
   const [resetConfirmInput, setResetConfirmInput] = useState('');
   const [newPasswordInput, setNewPasswordInput] = useState('');
@@ -178,6 +182,40 @@ export default function BackupModal({
 
         {/* Action list */}
         <div className="mt-6 space-y-4">
+          {/* Cloud Sync Status Info Box */}
+          <div
+            className={`p-3.5 rounded-lg border flex items-start gap-3 transition-colors ${
+              isCloudSynced
+                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-950 dark:text-emerald-200'
+                : 'bg-amber-500/10 border-amber-500/30 text-amber-950 dark:text-amber-200'
+            }`}
+          >
+            <div
+              className={`p-2 rounded-lg shrink-0 mt-0.5 ${
+                isCloudSynced
+                  ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
+                  : 'bg-amber-500/20 text-amber-600 dark:text-amber-400'
+              }`}
+            >
+              {isCloudSynced ? <Cloud className="w-4 h-4" /> : <Database className="w-4 h-4" />}
+            </div>
+            <div className="flex-1 text-xs">
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-sm">
+                  {isCloudSynced ? 'Baza w chmurze: AKTYWNA' : 'Baza w chmurze: PAMIĘĆ LOKALNA'}
+                </span>
+                {isCloudSynced && (
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                )}
+              </div>
+              <p className="mt-1 leading-relaxed opacity-90">
+                {isCloudSynced
+                  ? 'Wszystkie podłączone urządzenia członków komisji widzą i synchronizują te same głosy na żywo.'
+                  : 'Głosy zapisują się w pamięci tego telefonu. Aby wszyscy widzieli te same wyniki przez internet, podłącz darmową bazę Upstash Redis w panelu Vercel (zakładka Storage → Redis).'}
+              </p>
+            </div>
+          </div>
+
           {/* Download JSON */}
           <div className="p-4 rounded-lg bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 flex items-center justify-between gap-4">
             <div>

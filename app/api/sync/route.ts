@@ -15,8 +15,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Nieautoryzowany dostęp' }, { status: 401 });
   }
 
-  const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
-  const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+  const redisUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+  const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
 
   if (redisUrl && redisToken) {
     try {
@@ -27,14 +27,17 @@ export async function GET(req: NextRequest) {
       const data = await res.json();
       if (data && data.result) {
         const parsed = typeof data.result === 'string' ? JSON.parse(data.result) : data.result;
+        // Support envelope structure { votes, lastUpdated } or legacy plain votes
+        const votes = parsed.votes || parsed;
+        const timestamp = typeof parsed.lastUpdated === 'number' ? parsed.lastUpdated : lastUpdated;
         return NextResponse.json({
           cloudSync: true,
-          votes: parsed,
-          lastUpdated,
+          votes,
+          lastUpdated: timestamp,
         });
       }
     } catch (e) {
-      console.error('Error reading from Upstash Redis:', e);
+      console.error('Error reading from Upstash Redis / Vercel KV:', e);
     }
   }
 
@@ -62,29 +65,34 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing votes' }, { status: 400 });
     }
 
+    const now = Date.now();
     cachedVotes = votes;
-    lastUpdated = Date.now();
+    lastUpdated = now;
 
-    const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
-    const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+    const redisUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+    const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
 
     if (redisUrl && redisToken) {
       try {
+        const envelope = {
+          votes,
+          lastUpdated: now,
+        };
         await fetch(`${redisUrl}/set/rysie_2026_votes`, {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${redisToken}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(JSON.stringify(votes)),
+          body: JSON.stringify(JSON.stringify(envelope)),
         });
-        return NextResponse.json({ success: true, cloudSync: true, lastUpdated });
+        return NextResponse.json({ success: true, cloudSync: true, lastUpdated: now });
       } catch (err) {
-        console.error('Error saving to Upstash Redis:', err);
+        console.error('Error saving to Upstash Redis / Vercel KV:', err);
       }
     }
 
-    return NextResponse.json({ success: true, cloudSync: false, lastUpdated });
+    return NextResponse.json({ success: true, cloudSync: false, lastUpdated: now });
   } catch {
     return NextResponse.json({ error: 'Invalid payload' }, { status: 500 });
   }

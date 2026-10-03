@@ -37,6 +37,7 @@ export default function Navbar({
   onOpenProtocol,
   onOpenBackup,
   onLogout,
+  isCloudSynced = false,
 }: NavbarProps) {
   return (
     <header className="sticky top-0 z-40 w-full bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md border-b border-slate-200 dark:border-zinc-800/80 px-3 py-2.5 sm:px-6 sm:py-3 transition-colors">
@@ -61,9 +62,35 @@ export default function Navbar({
                 <span className="hidden sm:inline-flex text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/30 whitespace-nowrap shrink-0">
                   Panel Komisji
                 </span>
+                {isCloudSynced ? (
+                  <span
+                    title="Połączono z bazą chmurową. Głosy synchronizują się na żywo między wszystkimi urządzeniami."
+                    className="hidden md:inline-flex items-center gap-1.5 text-[10px] font-semibold px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/25 whitespace-nowrap shrink-0"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    Chmura na żywo
+                  </span>
+                ) : (
+                  <span
+                    title="Baza w chmurze nie jest podłączona. Dane zapisują się w pamięci tej przeglądarki."
+                    className="hidden md:inline-flex items-center gap-1.5 text-[10px] font-semibold px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/25 whitespace-nowrap shrink-0"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                    Pamięć lokalna
+                  </span>
+                )}
               </div>
-              <p className="text-[11px] sm:text-xs text-slate-500 dark:text-zinc-400 truncate">
-                Plebiscyt Nauczycielski • 6 Kategorii
+              <p className="text-[11px] sm:text-xs text-slate-500 dark:text-zinc-400 truncate flex items-center gap-1.5">
+                <span>Plebiscyt Nauczycielski</span>
+                <span>•</span>
+                {isCloudSynced ? (
+                  <span className="text-emerald-600 dark:text-emerald-400 font-medium inline-flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    Na żywo
+                  </span>
+                ) : (
+                  <span>Lokalnie</span>
+                )}
               </p>
             </div>
           </div>

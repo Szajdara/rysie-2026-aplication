@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import {
   CategoryId,
   VotesData,
@@ -29,6 +29,9 @@ export default function HomePage() {
   const [allKnownTeacherNames, setAllKnownTeacherNames] = useState<string[]>([]);
   const [isCloudSynced, setIsCloudSynced] = useState<boolean>(false);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+
+  const lastKnownCloudTimestampRef = useRef<number>(0);
+  const isPushingRef = useRef<boolean>(false);
 
   // Modals state
   const [isProtocolModalOpen, setIsProtocolModalOpen] = useState(false);
@@ -75,6 +78,9 @@ export default function HomePage() {
 
     // Load persisted votes from localStorage
     const savedVotes = localStorage.getItem(STORAGE_KEY_VOTES);
+    const savedTimestamp = Number(localStorage.getItem('rysie_votes_last_updated') || 0);
+    lastKnownCloudTimestampRef.current = savedTimestamp;
+
     if (savedVotes) {
       try {
         const parsed = JSON.parse(savedVotes);
@@ -98,21 +104,6 @@ export default function HomePage() {
         // ignore
       }
     }
-
-    // Optional cloud sync pull
-    fetch('/api/sync')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data?.cloudSync && data?.votes) {
-          setIsCloudSynced(true);
-          if (!savedVotes || Object.values(JSON.parse(savedVotes || '{}')).flat().length === 0) {
-            setVotesData(data.votes);
-          }
-        }
-      })
-      .catch(() => {
-        // Silent fallback to local storage
-      });
   }, []);
 
   const handleToggleTheme = () => {
@@ -128,25 +119,100 @@ export default function HomePage() {
     } catch {}
   };
 
+  // Pull latest votes from cloud database
+  const pullLatestFromCloud = useCallback(async () => {
+    if (isPushingRef.current) return;
+    try {
+      const res = await fetch('/api/sync', { cache: 'no-store' });
+      if (!res.ok) return;
+      const data = await res.json();
+      setIsCloudSynced(Boolean(data?.cloudSync));
+
+      if (data?.votes && typeof data?.lastUpdated === 'number') {
+        const cloudIsNewer = data.lastUpdated > lastKnownCloudTimestampRef.current;
+        const localIsEmpty = Object.values(votesData).flat().length === 0;
+
+        if (cloudIsNewer || localIsEmpty) {
+          lastKnownCloudTimestampRef.current = data.lastUpdated;
+          setVotesData(data.votes);
+          try {
+            localStorage.setItem(STORAGE_KEY_VOTES, JSON.stringify(data.votes));
+            localStorage.setItem('rysie_votes_last_updated', String(data.lastUpdated));
+          } catch {}
+
+          // Merge teacher suggestions
+          const cloudTeachers = Object.values(data.votes as VotesData)
+            .flat()
+            .map((t) => t?.name)
+            .filter(Boolean);
+          if (cloudTeachers.length > 0) {
+            setAllKnownTeacherNames((prev) => {
+              const combined = Array.from(new Set([...prev, ...cloudTeachers])).sort((a, b) =>
+                a.localeCompare(b, 'pl')
+              );
+              try {
+                localStorage.setItem(STORAGE_KEY_CUSTOM_TEACHERS, JSON.stringify(combined));
+              } catch {}
+              return combined;
+            });
+          }
+        }
+      }
+    } catch {
+      // silent network fallback
+    }
+  }, [votesData]);
+
+  // Real-time synchronization loop across all devices
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    pullLatestFromCloud();
+
+    const interval = setInterval(() => {
+      pullLatestFromCloud();
+    }, 3000);
+
+    const onFocus = () => pullLatestFromCloud();
+    window.addEventListener('focus', onFocus);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('focus', onFocus);
+    };
+  }, [isAuthenticated, pullLatestFromCloud]);
+
   // Save changes to localStorage & trigger background cloud sync
   const persistVotes = useCallback((newData: VotesData) => {
+    const now = Date.now();
+    lastKnownCloudTimestampRef.current = now;
     setVotesData(newData);
     try {
       localStorage.setItem(STORAGE_KEY_VOTES, JSON.stringify(newData));
-      // Background async push to server
-      fetch('/api/sync', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ votes: newData }),
-      })
-        .then((res) => res.json())
-        .then((resp) => {
-          if (resp?.cloudSync) setIsCloudSynced(true);
-        })
-        .catch(() => {});
+      localStorage.setItem('rysie_votes_last_updated', String(now));
     } catch (e) {
-      console.error('Failed to persist votes', e);
+      console.error('Failed to persist votes locally', e);
     }
+
+    isPushingRef.current = true;
+    fetch('/api/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ votes: newData }),
+    })
+      .then((res) => res.json())
+      .then((resp) => {
+        if (resp?.cloudSync) setIsCloudSynced(true);
+        if (typeof resp?.lastUpdated === 'number') {
+          lastKnownCloudTimestampRef.current = Math.max(lastKnownCloudTimestampRef.current, resp.lastUpdated);
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to sync to cloud', err);
+      })
+      .finally(() => {
+        isPushingRef.current = false;
+      });
   }, []);
 
   // Registry update helper
@@ -436,6 +502,7 @@ export default function HomePage() {
         votesData={votesData}
         onRestoreData={handleRestoreData}
         onResetAllData={handleResetAllData}
+        isCloudSynced={isCloudSynced}
       />
     </div>
   );
