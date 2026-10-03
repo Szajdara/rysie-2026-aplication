@@ -5,12 +5,6 @@ import { CategoryDefinition, TeacherVote } from '@/lib/types';
 import { calculateRankings, getCategoryLeader, formatVotesCount, formatTeacherName } from '@/lib/ranking';
 import TeacherRow from './TeacherRow';
 import {
-  Zap,
-  Shield,
-  Search,
-  Flame,
-  Sparkles,
-  Crown,
   UserPlus,
   Trophy,
   Users,
@@ -36,15 +30,6 @@ interface CategoryCardProps {
   ) => void;
 }
 
-const ICON_MAP = {
-  Zap,
-  Shield,
-  Search,
-  Flame,
-  Sparkles,
-  Crown,
-};
-
 export default function CategoryCard({
   category,
   teachers,
@@ -57,7 +42,6 @@ export default function CategoryCard({
   const [newTeacherName, setNewTeacherName] = useState('');
   const [inputError, setInputError] = useState<string | null>(null);
 
-  const Icon = ICON_MAP[category.iconName] || Trophy;
   const rankedTeachers = calculateRankings(teachers);
   const leaderInfo = getCategoryLeader(teachers);
   const totalCategoryVotes = teachers.reduce((sum, t) => sum + t.votes, 0);
@@ -96,25 +80,16 @@ export default function CategoryCard({
     >
       {/* Category Header */}
       <div className="flex items-start justify-between gap-3 pb-3.5 border-b border-slate-200 dark:border-zinc-800/80">
-        <div className="flex items-start gap-3">
-          <div
-            className={`w-11 h-11 rounded-2xl bg-gradient-to-br ${category.badgeColor} p-0.5 shadow-md flex items-center justify-center shrink-0 mt-0.5`}
-          >
-            <div className="w-full h-full bg-white dark:bg-zinc-950 rounded-[14px] flex items-center justify-center">
-              <Icon className="w-5 h-5 text-amber-500 dark:text-amber-400" />
-            </div>
-          </div>
-          <div>
-            <h3 className="font-extrabold text-lg sm:text-xl text-slate-900 dark:text-white tracking-tight leading-snug">
-              {category.title}
-            </h3>
-            <p className="text-xs text-blue-600 dark:text-blue-400 font-medium italic">
-              {category.tagline}
-            </p>
-            <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5 line-clamp-1">
-              {category.description}
-            </p>
-          </div>
+        <div>
+          <h3 className="font-extrabold text-lg sm:text-xl text-slate-900 dark:text-white tracking-tight leading-snug">
+            {category.title}
+          </h3>
+          <p className="text-xs text-blue-600 dark:text-blue-400 font-medium italic mt-0.5">
+            {category.tagline}
+          </p>
+          <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1 line-clamp-2">
+            {category.description}
+          </p>
         </div>
 
         {/* Total Votes in category badge */}
