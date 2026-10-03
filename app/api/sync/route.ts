@@ -19,14 +19,56 @@ function cleanEnv(val?: string): string | undefined {
 }
 
 function getRedisConfig() {
-  const rawUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
-  const rawToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
-  let redisUrl = cleanEnv(rawUrl);
-  const redisToken = cleanEnv(rawToken);
+  const knownDatabaseUrl = 'https://wise-gobbler-191837.upstash.io';
 
-  if (redisUrl && !redisUrl.startsWith('http://') && !redisUrl.startsWith('https://')) {
+  let rawUrl =
+    process.env.UPSTASH_REDIS_REST_URL ||
+    process.env.KV_REST_API_URL ||
+    process.env.UPSTASH_URL ||
+    process.env.REDIS_URL;
+
+  // Search through all env variables if not found
+  if (!rawUrl) {
+    for (const [, val] of Object.entries(process.env)) {
+      if (typeof val === 'string' && val.includes('upstash.io')) {
+        rawUrl = val;
+        break;
+      }
+    }
+  }
+
+  let redisUrl = cleanEnv(rawUrl) || knownDatabaseUrl;
+  if (!redisUrl.startsWith('http://') && !redisUrl.startsWith('https://')) {
     redisUrl = `https://${redisUrl}`;
   }
+
+  // Search for token across all possible environment keys
+  let rawToken =
+    process.env.UPSTASH_REDIS_REST_TOKEN ||
+    process.env.KV_REST_API_TOKEN ||
+    process.env.UPSTASH_TOKEN ||
+    process.env.UPSTASH_REDIS_TOKEN ||
+    process.env.REDIS_TOKEN;
+
+  if (!rawToken) {
+    for (const [key, val] of Object.entries(process.env)) {
+      const lower = key.toLowerCase();
+      if (
+        (lower.includes('upstash') || lower.includes('redis') || lower.includes('token')) &&
+        !lower.includes('secret') &&
+        !lower.includes('session') &&
+        !lower.includes('next') &&
+        !lower.includes('vercel') &&
+        typeof val === 'string' &&
+        val.length > 20
+      ) {
+        rawToken = val;
+        break;
+      }
+    }
+  }
+
+  const redisToken = cleanEnv(rawToken);
 
   return { redisUrl, redisToken };
 }
@@ -56,8 +98,17 @@ export async function GET(req: NextRequest) {
         const timestamp = typeof parsed.lastUpdated === 'number' ? parsed.lastUpdated : lastUpdated;
         return NextResponse.json({
           cloudSync: true,
+          hasToken: true,
           votes,
           lastUpdated: timestamp,
+        });
+      } else {
+        // Connected to Redis, but key is empty yet (brand new database)
+        return NextResponse.json({
+          cloudSync: true,
+          hasToken: true,
+          votes: cachedVotes || INITIAL_VOTES_DATA,
+          lastUpdated,
         });
       }
     } catch (e) {
@@ -67,6 +118,7 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({
     cloudSync: Boolean(redisUrl && redisToken),
+    hasToken: Boolean(redisToken),
     votes: cachedVotes || INITIAL_VOTES_DATA,
     lastUpdated,
   });
