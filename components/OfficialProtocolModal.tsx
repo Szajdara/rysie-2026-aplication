@@ -38,24 +38,24 @@ export default function OfficialProtocolModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/90 backdrop-blur-md animate-fadeIn overflow-y-auto">
       <div className="relative w-full max-w-4xl bg-white text-zinc-900 rounded-xl p-6 sm:p-10 shadow-2xl my-auto print:p-0 print:shadow-none print:w-full print:max-w-none">
         {/* Controls - Hidden during print */}
-        <div className="no-print flex items-center justify-between pb-6 mb-6 border-b border-zinc-200">
-          <div className="flex items-center gap-2">
-            <FileText className="w-5 h-5 text-amber-600" />
-            <h3 className="font-bold text-lg text-zinc-900">
-              Podgląd Protokołu Końcowego
+        <div className="no-print flex items-center justify-between gap-2 pb-4 mb-4 sm:pb-6 sm:mb-6 border-b border-zinc-200">
+          <div className="flex items-center gap-2 min-w-0">
+            <FileText className="w-5 h-5 text-amber-600 shrink-0" />
+            <h3 className="font-bold text-base sm:text-lg text-zinc-900 truncate">
+              Podgląd Protokołu
             </h3>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={handlePrint}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg text-sm flex items-center gap-2 shadow-md shadow-blue-500/20 transition-all active:scale-95"
+              className="px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2 shadow-md shadow-blue-500/20 transition-all active:scale-95 whitespace-nowrap shrink-0"
             >
-              <Printer className="w-4 h-4" />
-              <span>Drukuj / Zapisz jako PDF</span>
+              <Printer className="w-4 h-4 shrink-0" />
+              <span>Drukuj / PDF</span>
             </button>
             <button
               onClick={onClose}
-              className="w-9 h-9 rounded-lg bg-zinc-100 hover:bg-zinc-200 text-zinc-600 flex items-center justify-center transition-colors"
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-zinc-100 hover:bg-zinc-200 text-zinc-600 flex items-center justify-center transition-colors shrink-0"
             >
               <X className="w-5 h-5" />
             </button>

@@ -151,7 +151,7 @@ export default function BackupModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 dark:bg-black/90 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-xl bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl p-6 sm:p-8 shadow-2xl overflow-y-auto max-h-[90vh] transition-colors">
+      <div className="relative w-full max-w-xl bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl p-4 sm:p-7 shadow-2xl overflow-y-auto max-h-[90vh] transition-colors">
         {/* Modal Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-zinc-800">
           <h3 className="font-extrabold text-xl text-slate-900 dark:text-white">
@@ -217,7 +217,7 @@ export default function BackupModal({
           </div>
 
           {/* Download JSON */}
-          <div className="p-4 rounded-lg bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 flex items-center justify-between gap-4">
+          <div className="p-3.5 sm:p-4 rounded-lg bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
             <div>
               <h4 className="font-bold text-sm text-slate-900 dark:text-zinc-100">
                 Pobierz kopię zapasową (JSON)
@@ -228,15 +228,15 @@ export default function BackupModal({
             </div>
             <button
               onClick={handleExportJSON}
-              className="px-3.5 py-2 rounded-lg bg-slate-200 hover:bg-slate-300 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-800 dark:text-zinc-200 text-xs font-semibold flex items-center gap-1.5 shrink-0 transition-colors"
+              className="w-full sm:w-auto px-3.5 py-2 rounded-lg bg-slate-200 hover:bg-slate-300 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-800 dark:text-zinc-200 text-xs font-semibold flex items-center justify-center gap-1.5 shrink-0 transition-colors whitespace-nowrap"
             >
-              <Download className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <Download className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />
               <span>Zapisz JSON</span>
             </button>
           </div>
 
           {/* Export CSV for Excel */}
-          <div className="p-4 rounded-lg bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 flex items-center justify-between gap-4">
+          <div className="p-3.5 sm:p-4 rounded-lg bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
             <div>
               <h4 className="font-bold text-sm text-slate-900 dark:text-zinc-100">
                 Eksport do Excel / Arkuszy (CSV)
@@ -247,15 +247,15 @@ export default function BackupModal({
             </div>
             <button
               onClick={handleExportCSV}
-              className="px-3.5 py-2 rounded-lg bg-slate-200 hover:bg-slate-300 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-800 dark:text-zinc-200 text-xs font-semibold flex items-center gap-1.5 shrink-0 transition-colors"
+              className="w-full sm:w-auto px-3.5 py-2 rounded-lg bg-slate-200 hover:bg-slate-300 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-800 dark:text-zinc-200 text-xs font-semibold flex items-center justify-center gap-1.5 shrink-0 transition-colors whitespace-nowrap"
             >
-              <FileSpreadsheet className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              <FileSpreadsheet className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
               <span>Pobierz CSV</span>
             </button>
           </div>
 
           {/* Import JSON */}
-          <div className="p-4 rounded-lg bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 flex items-center justify-between gap-4">
+          <div className="p-3.5 sm:p-4 rounded-lg bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
             <div>
               <h4 className="font-bold text-sm text-slate-900 dark:text-zinc-100">
                 Przywróć dane z pliku
@@ -264,8 +264,8 @@ export default function BackupModal({
                 Wgraj wcześniej zapisany plik kopii zapasowej .json.
               </p>
             </div>
-            <label className="cursor-pointer px-3.5 py-2 rounded-lg bg-slate-200 hover:bg-slate-300 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-800 dark:text-zinc-200 text-xs font-semibold flex items-center gap-1.5 shrink-0 transition-colors">
-              <Upload className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            <label className="cursor-pointer w-full sm:w-auto px-3.5 py-2 rounded-lg bg-slate-200 hover:bg-slate-300 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-800 dark:text-zinc-200 text-xs font-semibold flex items-center justify-center gap-1.5 shrink-0 transition-colors whitespace-nowrap">
+              <Upload className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />
               <span>Wgraj plik</span>
               <input
                 type="file"
@@ -277,25 +277,25 @@ export default function BackupModal({
           </div>
 
           {/* Change Password Card */}
-          <div className="p-4 rounded-lg bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800">
+          <div className="p-3.5 sm:p-4 rounded-lg bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800">
             <div className="flex items-center gap-2 text-slate-900 dark:text-zinc-100 font-bold text-sm">
-              <KeyRound className="w-4 h-4 text-blue-500" />
+              <KeyRound className="w-4 h-4 text-blue-500 shrink-0" />
               <span>Zmień hasło dostępu do panelu</span>
             </div>
             <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
               Ustaw nowe własne hasło dla komisji liczącej głosy.
             </p>
-            <form onSubmit={handleSavePassword} className="flex items-center gap-2 mt-3">
+            <form onSubmit={handleSavePassword} className="flex flex-col sm:flex-row sm:items-center gap-2 mt-3">
               <input
                 type="password"
                 value={newPasswordInput}
                 onChange={(e) => setNewPasswordInput(e.target.value)}
                 placeholder="Wpisz nowe hasło..."
-                className="flex-1 px-3.5 py-2 bg-white dark:bg-zinc-950 border border-slate-300 dark:border-zinc-700 rounded-lg text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                className="w-full sm:flex-1 px-3.5 py-2 bg-white dark:bg-zinc-950 border border-slate-300 dark:border-zinc-700 rounded-lg text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 min-w-0"
               />
               <button
                 type="submit"
-                className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 font-bold text-xs text-white transition-all active:scale-95 shrink-0 shadow-sm shadow-blue-500/20"
+                className="w-full sm:w-auto px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 font-bold text-xs text-white transition-all active:scale-95 shrink-0 shadow-sm shadow-blue-500/20 whitespace-nowrap flex items-center justify-center"
               >
                 Zapisz hasło
               </button>
@@ -303,29 +303,29 @@ export default function BackupModal({
           </div>
 
           {/* Danger zone: Reset */}
-          <div className="p-4 rounded-lg bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/40 mt-6">
+          <div className="p-3.5 sm:p-4 rounded-lg bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/40 mt-6">
             <div className="flex items-center gap-2 text-red-600 dark:text-red-400 font-bold text-sm">
-              <AlertTriangle className="w-4 h-4" />
+              <AlertTriangle className="w-4 h-4 shrink-0" />
               <span>Strefa niebezpieczna: Resetowanie bazy</span>
             </div>
             <p className="text-xs text-slate-600 dark:text-zinc-400 mt-1">
               Ta operacja wyzeruje wszystkie głosy i listę nauczycieli. Aby potwierdzić, wpisz poniżej słowo <strong className="text-red-600 dark:text-red-400">RESET</strong>:
             </p>
 
-            <div className="flex items-center gap-2 mt-3">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 mt-3">
               <input
                 type="text"
                 value={resetConfirmInput}
                 onChange={(e) => setResetConfirmInput(e.target.value)}
                 placeholder="Wpisz RESET..."
-                className="flex-1 px-3 py-2 bg-white dark:bg-zinc-950 border border-red-300 dark:border-red-900/60 rounded-lg text-xs text-slate-900 dark:text-white uppercase focus:outline-none focus:border-red-500"
+                className="w-full sm:flex-1 px-3.5 py-2 bg-white dark:bg-zinc-950 border border-red-300 dark:border-red-900/60 rounded-lg text-xs sm:text-sm text-slate-900 dark:text-white uppercase focus:outline-none focus:border-red-500 min-w-0"
               />
               <button
                 onClick={handleResetSubmit}
                 disabled={resetConfirmInput.trim().toUpperCase() !== 'RESET'}
-                className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 disabled:opacity-40 disabled:pointer-events-none text-white font-bold text-xs flex items-center gap-1.5 transition-colors"
+                className="w-full sm:w-auto px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 disabled:opacity-40 disabled:pointer-events-none text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-colors shrink-0 whitespace-nowrap"
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-4 h-4 shrink-0" />
                 <span>Wyzeruj wszystko</span>
               </button>
             </div>
