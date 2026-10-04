@@ -31,6 +31,7 @@ export default function LoginScreen({ onLoginSuccess, theme, onToggleTheme }: Lo
       const data = await res.json();
 
       if (res.ok && data.success) {
+        localStorage.setItem('rysie_session', JSON.stringify({ user: data.user, time: Date.now() }));
         sessionStorage.setItem('rysie_session', JSON.stringify({ user: data.user, time: Date.now() }));
         onLoginSuccess(data.user);
       } else {

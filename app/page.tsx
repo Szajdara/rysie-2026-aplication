@@ -49,7 +49,7 @@ export default function HomePage() {
     }
 
     // Check local session
-    const storedSession = sessionStorage.getItem('rysie_session');
+    const storedSession = localStorage.getItem('rysie_session') || sessionStorage.getItem('rysie_session');
     if (storedSession) {
       try {
         const parsed = JSON.parse(storedSession);
@@ -70,6 +70,7 @@ export default function HomePage() {
           setIsAuthenticated(true);
         } else {
           sessionStorage.removeItem('rysie_session');
+          localStorage.removeItem('rysie_session');
           setIsAuthenticated(false);
         }
       })
@@ -136,9 +137,10 @@ export default function HomePage() {
 
       if (data?.votes && typeof data?.lastUpdated === 'number') {
         const cloudIsNewer = data.lastUpdated > lastKnownCloudTimestampRef.current;
-        const localIsEmpty = Object.values(votesData).flat().length === 0;
+        const currentTotalVotes = Object.values(votesData).flat().reduce((sum, t) => sum + (t?.votes || 0), 0);
+        const cloudTotalVotes = Object.values(data.votes as VotesData).flat().reduce((sum, t: any) => sum + (t?.votes || 0), 0);
 
-        if (cloudIsNewer || localIsEmpty) {
+        if (cloudIsNewer || (cloudTotalVotes > 0 && currentTotalVotes === 0)) {
           lastKnownCloudTimestampRef.current = data.lastUpdated;
           setVotesData(data.votes);
           try {
@@ -205,6 +207,7 @@ export default function HomePage() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ votes: newData }),
+      keepalive: true,
     })
       .then((res) => res.json())
       .then((resp) => {
@@ -387,6 +390,7 @@ export default function HomePage() {
 
   const handleLogout = async () => {
     sessionStorage.removeItem('rysie_session');
+    localStorage.removeItem('rysie_session');
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
     } catch {}
