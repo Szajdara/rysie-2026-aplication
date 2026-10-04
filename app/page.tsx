@@ -12,6 +12,7 @@ import {
   INITIAL_VOTES_DATA,
   STORAGE_KEY_VOTES,
   STORAGE_KEY_CUSTOM_TEACHERS,
+  DEFAULT_TEACHER_NAMES,
 } from '@/lib/constants';
 import Navbar from '@/components/Navbar';
 import CategoryTabs from '@/components/CategoryTabs';
@@ -99,13 +100,18 @@ export default function HomePage() {
 
     // Load teacher suggestions registry
     const savedNames = localStorage.getItem(STORAGE_KEY_CUSTOM_TEACHERS);
+    let initialNames = [...DEFAULT_TEACHER_NAMES];
     if (savedNames) {
       try {
-        setAllKnownTeacherNames(JSON.parse(savedNames));
+        const parsed = JSON.parse(savedNames);
+        if (Array.isArray(parsed)) {
+          initialNames = Array.from(new Set([...initialNames, ...parsed]));
+        }
       } catch {
         // ignore
       }
     }
+    setAllKnownTeacherNames(initialNames.sort((a, b) => a.localeCompare(b, 'pl')));
   }, []);
 
   const handleToggleTheme = () => {
@@ -153,17 +159,15 @@ export default function HomePage() {
             .flat()
             .map((t) => t?.name)
             .filter(Boolean);
-          if (cloudTeachers.length > 0) {
-            setAllKnownTeacherNames((prev) => {
-              const combined = Array.from(new Set([...prev, ...cloudTeachers])).sort((a, b) =>
-                a.localeCompare(b, 'pl')
-              );
-              try {
-                localStorage.setItem(STORAGE_KEY_CUSTOM_TEACHERS, JSON.stringify(combined));
-              } catch {}
-              return combined;
-            });
-          }
+          setAllKnownTeacherNames((prev) => {
+            const combined = Array.from(
+              new Set([...DEFAULT_TEACHER_NAMES, ...prev, ...cloudTeachers])
+            ).sort((a, b) => a.localeCompare(b, 'pl'));
+            try {
+              localStorage.setItem(STORAGE_KEY_CUSTOM_TEACHERS, JSON.stringify(combined));
+            } catch {}
+            return combined;
+          });
         }
       }
     } catch {
