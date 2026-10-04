@@ -86,6 +86,25 @@ export async function GET(req: NextRequest) {
 
   if (redisUrl && redisToken) {
     try {
+      if (req.nextUrl.searchParams.get('inspect') === 'all') {
+        const keysRes = await fetch(`${redisUrl}/keys/*`, {
+          headers: { Authorization: `Bearer ${redisToken}` },
+          cache: 'no-store',
+        });
+        const keysData = await keysRes.json();
+        const allData: Record<string, any> = {};
+        if (Array.isArray(keysData?.result)) {
+          for (const k of keysData.result) {
+            const vRes = await fetch(`${redisUrl}/get/${k}`, {
+              headers: { Authorization: `Bearer ${redisToken}` },
+              cache: 'no-store',
+            });
+            allData[k] = await vRes.json();
+          }
+        }
+        return NextResponse.json({ inspect: true, keys: keysData, allData });
+      }
+
       const res = await fetch(`${redisUrl}/get/rysie_2026_votes`, {
         headers: { Authorization: `Bearer ${redisToken}` },
         cache: 'no-store',
