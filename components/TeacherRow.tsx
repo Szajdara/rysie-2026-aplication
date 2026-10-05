@@ -21,20 +21,26 @@ export default function TeacherRow({
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [justBumped, setJustBumped] = useState(false);
 
+  const votesCount = Number(teacher.votes) || 0;
+
   const handlePlus = (delta: number = 1) => {
-    if (typeof window !== 'undefined' && 'vibrate' in navigator) {
-      navigator.vibrate(15);
-    }
+    try {
+      if (typeof window !== 'undefined' && 'vibrate' in navigator && typeof navigator.vibrate === 'function') {
+        navigator.vibrate(15);
+      }
+    } catch {}
     setJustBumped(true);
     setTimeout(() => setJustBumped(false), 300);
     onIncrement(teacher.id, delta);
   };
 
   const handleMinus = () => {
-    if (teacher.votes <= 0) return;
-    if (typeof window !== 'undefined' && 'vibrate' in navigator) {
-      navigator.vibrate(10);
-    }
+    if (votesCount <= 0) return;
+    try {
+      if (typeof window !== 'undefined' && 'vibrate' in navigator && typeof navigator.vibrate === 'function') {
+        navigator.vibrate(10);
+      }
+    } catch {}
     onDecrement(teacher.id);
   };
 
@@ -169,7 +175,7 @@ export default function TeacherRow({
           <button
             type="button"
             onClick={handleMinus}
-            disabled={teacher.votes <= 0}
+            disabled={votesCount <= 0}
             title="Odejmij 1 głos"
             className="w-10 h-10 rounded-lg bg-slate-200 hover:bg-slate-300 active:bg-slate-400 text-slate-800 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:active:bg-zinc-900 dark:text-zinc-200 disabled:opacity-25 disabled:pointer-events-none border border-slate-300 dark:border-zinc-700/80 flex items-center justify-center font-bold text-lg active:scale-90 transition-all select-none shadow-sm"
           >
@@ -186,7 +192,7 @@ export default function TeacherRow({
                 : 'text-slate-900 dark:text-zinc-200'
             }`}
           >
-            {teacher.votes}
+            {votesCount}
           </div>
 
           {/* Quick +1 button */}

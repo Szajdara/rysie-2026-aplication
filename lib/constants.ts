@@ -67,12 +67,17 @@ export const INITIAL_VOTES_DATA: VotesData = {
 };
 
 export const DEFAULT_AUTH_CREDENTIALS = {
-  login: 'organizator_rysi_2026',
+  login: 'organizator',
+  altLogin: 'organizator_rysi_2026',
+  password: 'rysie2026',
+  altPassword: 'Rysie26org@niz@tor',
 };
 
 export const STORAGE_KEY_VOTES = 'rysie_2026_votes_data_v1';
 export const STORAGE_KEY_AUTH = 'rysie_2026_auth_session_v1';
 export const STORAGE_KEY_CUSTOM_TEACHERS = 'rysie_2026_all_teachers_registry_v1';
+export const STORAGE_KEY_SYNC_MODE = 'rysie_2026_sync_mode_v1';
+
 
 export const DEFAULT_TEACHER_NAMES: string[] = [
   'Adam Szewczyczak',

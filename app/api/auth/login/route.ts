@@ -37,27 +37,41 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Server-side expected credentials (never leaked to client bundle)
-    const expectedLogin = process.env.ADMIN_LOGIN || DEFAULT_AUTH_CREDENTIALS.login;
-    const expectedPassword =
-      process.env.ADMIN_PASSWORD ||
-      process.env.organizator_rysi_2026 ||
-      'Rysie26org@niz@tor';
+    const configuredLogin = process.env.ADMIN_LOGIN;
+    const configuredPassword = process.env.ADMIN_PASSWORD || process.env.organizator_rysi_2026;
+
+    const validLogins = [
+      configuredLogin,
+      DEFAULT_AUTH_CREDENTIALS.login,
+      DEFAULT_AUTH_CREDENTIALS.altLogin,
+    ].filter(Boolean).map((s) => s!.trim().toLowerCase());
+
+    const validPasswords = [
+      configuredPassword,
+      DEFAULT_AUTH_CREDENTIALS.password,
+      DEFAULT_AUTH_CREDENTIALS.altPassword,
+    ].filter(Boolean).map((s) => s!.trim());
 
     // 3. Timing-attack safe comparison
-    const isLoginValid = timingSafeEqualString(login.trim().toLowerCase(), expectedLogin.trim().toLowerCase());
-    const isPasswordValid = timingSafeEqualString(password.trim(), expectedPassword.trim());
+    const userLoginClean = login.trim().toLowerCase();
+    const userPassClean = password.trim();
+
+    const isLoginValid = validLogins.some((expected) => timingSafeEqualString(userLoginClean, expected));
+    const isPasswordValid = validPasswords.some((expected) => timingSafeEqualString(userPassClean, expected));
 
     if (isLoginValid && isPasswordValid) {
+      const activeUser = configuredLogin || DEFAULT_AUTH_CREDENTIALS.login;
       // Clear rate limit counter on success
       clearRateLimit(clientIp);
 
       // Generate cryptographically signed HMAC token
-      const signedToken = createSignedSession(expectedLogin);
+      const signedToken = createSignedSession(activeUser);
 
       const response = NextResponse.json({
         success: true,
         message: 'Zalogowano pomyślnie',
-        user: expectedLogin,
+        user: activeUser,
+        token: signedToken,
       });
 
       // Set hardened session cookie

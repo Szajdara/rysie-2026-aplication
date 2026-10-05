@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
+import { SyncMode } from '@/lib/types';
 import {
-  Award,
   FileText,
   RotateCcw,
   LogOut,
@@ -10,6 +10,9 @@ import {
   Sparkles,
   Sun,
   Moon,
+  HardDrive,
+  Cloud,
+  AlertTriangle,
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -23,7 +26,10 @@ interface NavbarProps {
   onOpenProtocol: () => void;
   onOpenBackup: () => void;
   onLogout: () => void;
+  syncMode: SyncMode;
   isCloudSynced?: boolean;
+  cloudError?: string | null;
+  onOpenModeSwitch: () => void;
 }
 
 export default function Navbar({
@@ -37,8 +43,85 @@ export default function Navbar({
   onOpenProtocol,
   onOpenBackup,
   onLogout,
+  syncMode,
   isCloudSynced = false,
+  cloudError = null,
+  onOpenModeSwitch,
 }: NavbarProps) {
+  const renderModeBadge = (isMobile: boolean = false) => {
+    if (syncMode === 'local') {
+      return (
+        <button
+          onClick={onOpenModeSwitch}
+          type="button"
+          title="Pracujesz w bezpiecznym trybie lokalnym. Kliknij, aby zmienić tryb."
+          className={`inline-flex items-center gap-1.5 rounded-lg border font-bold transition-all shadow-sm active:scale-95 cursor-pointer bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/40 hover:bg-amber-500/25 ${
+            isMobile ? 'text-[11px] px-2 py-1' : 'text-xs px-2.5 py-1'
+          }`}
+        >
+          <HardDrive className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
+          <span>Tryb lokalny</span>
+          <span className="text-[10px] text-amber-700 dark:text-amber-400 font-normal underline ml-0.5">
+            zmień
+          </span>
+        </button>
+      );
+    }
+
+    if (cloudError) {
+      return (
+        <button
+          onClick={onOpenModeSwitch}
+          type="button"
+          title={`Problem z chmurą: ${cloudError}. Kliknij, aby przełączyć na bezpieczny tryb lokalny.`}
+          className={`inline-flex items-center gap-1.5 rounded-lg border font-bold transition-all shadow-sm active:scale-95 cursor-pointer bg-red-500/15 text-red-700 dark:text-red-300 border-red-500/40 hover:bg-red-500/25 animate-pulse ${
+            isMobile ? 'text-[11px] px-2 py-1' : 'text-xs px-2.5 py-1'
+          }`}
+        >
+          <AlertTriangle className="w-3.5 h-3.5 text-red-500 shrink-0" />
+          <span>{isMobile ? 'Błąd na żywo' : 'Błąd bazy na żywo'}</span>
+          <span className="text-[10px] font-normal underline ml-0.5">
+            przełącz
+          </span>
+        </button>
+      );
+    }
+
+    if (isCloudSynced) {
+      return (
+        <button
+          onClick={onOpenModeSwitch}
+          type="button"
+          title="Połączono z bazą chmurową. Głosy synchronizują się na żywo między wszystkimi urządzeniami. Kliknij, aby zmienić tryb."
+          className={`inline-flex items-center gap-1.5 rounded-lg border font-bold transition-all shadow-sm active:scale-95 cursor-pointer bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/25 ${
+            isMobile ? 'text-[11px] px-2 py-1' : 'text-xs px-2.5 py-1'
+          }`}
+        >
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+          <span>Na żywo</span>
+          <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-normal underline ml-0.5">
+            zmień
+          </span>
+        </button>
+      );
+    }
+
+    return (
+      <button
+        onClick={onOpenModeSwitch}
+        type="button"
+        title="Baza w chmurze nie jest podłączona lub czeka na dane. Kliknij, aby zmienić tryb."
+        className={`inline-flex items-center gap-1.5 rounded-lg border font-semibold transition-all shadow-sm active:scale-95 cursor-pointer bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 border-slate-300 dark:border-zinc-700 hover:bg-slate-200 dark:hover:bg-zinc-700 ${
+          isMobile ? 'text-[11px] px-2 py-1' : 'text-xs px-2.5 py-1'
+        }`}
+      >
+        <Cloud className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+        <span>Chmura (oczekiwanie)</span>
+        <span className="text-[10px] font-normal underline ml-0.5">zmień</span>
+      </button>
+    );
+  };
+
   return (
     <header className="sticky top-0 z-40 w-full bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md border-b border-slate-200 dark:border-zinc-800/80 px-3 py-2.5 sm:px-6 sm:py-3 transition-colors">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-2.5 sm:gap-3">
@@ -62,41 +145,33 @@ export default function Navbar({
                 <span className="hidden sm:inline-flex text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/30 whitespace-nowrap shrink-0">
                   Panel Komisji
                 </span>
-                {isCloudSynced ? (
-                  <span
-                    title="Połączono z bazą chmurową. Głosy synchronizują się na żywo między wszystkimi urządzeniami."
-                    className="hidden md:inline-flex items-center gap-1.5 text-[10px] font-semibold px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/25 whitespace-nowrap shrink-0"
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    Chmura na żywo
-                  </span>
-                ) : (
-                  <span
-                    title="Baza w chmurze nie jest podłączona. Dane zapisują się w pamięci tej przeglądarki."
-                    className="hidden md:inline-flex items-center gap-1.5 text-[10px] font-semibold px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/25 whitespace-nowrap shrink-0"
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                    Pamięć lokalna
-                  </span>
-                )}
+                {/* Desktop Mode Toggle Badge */}
+                <div className="hidden md:inline-flex items-center">
+                  {renderModeBadge(false)}
+                </div>
               </div>
               <p className="text-[11px] sm:text-xs text-slate-500 dark:text-zinc-400 truncate flex items-center gap-1.5">
                 <span>Plebiscyt Nauczycielski</span>
                 <span>•</span>
-                {isCloudSynced ? (
+                {syncMode === 'local' ? (
+                  <span className="text-amber-700 dark:text-amber-400 font-medium">
+                    Zapis lokalny (bezpieczny offline)
+                  </span>
+                ) : isCloudSynced ? (
                   <span className="text-emerald-600 dark:text-emerald-400 font-medium inline-flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    Na żywo
+                    Synchronizacja na żywo
                   </span>
                 ) : (
-                  <span>Lokalnie</span>
+                  <span>Próba połączenia z chmurą</span>
                 )}
               </p>
             </div>
           </div>
 
-          {/* Mobile quick stats & theme toggle */}
-          <div className="flex md:hidden items-center gap-1.5 sm:gap-2 text-xs shrink-0">
+          {/* Mobile quick stats, mode badge & theme toggle */}
+          <div className="flex md:hidden items-center gap-1.5 text-xs shrink-0">
+            {renderModeBadge(true)}
             <button
               onClick={onToggleTheme}
               title={theme === 'dark' ? 'Przełącz na tryb jasny' : 'Przełącz na tryb ciemny'}
@@ -108,7 +183,7 @@ export default function Navbar({
                 <Moon className="w-4 h-4 text-slate-700" />
               )}
             </button>
-            <div className="px-2 sm:px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-slate-800 dark:text-zinc-300 flex items-center gap-1.5 font-medium whitespace-nowrap shrink-0">
+            <div className="px-2 py-1 rounded-lg bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-slate-800 dark:text-zinc-300 flex items-center gap-1.5 font-medium whitespace-nowrap shrink-0">
               <Sparkles className="w-3.5 h-3.5 text-blue-500 dark:text-blue-400 shrink-0" />
               <span className="whitespace-nowrap">
                 <strong className="text-blue-600 dark:text-blue-400 font-bold">{totalVotes}</strong> gł.
@@ -169,7 +244,7 @@ export default function Navbar({
             {/* Backup & Tools button */}
             <button
               onClick={onOpenBackup}
-              title="Kopia zapasowa, eksport i narzędzia"
+              title="Kopia zapasowa, tryb pracy i narzędzia"
               className="p-1.5 sm:p-2 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 border border-slate-200 dark:border-zinc-800 text-slate-700 dark:text-zinc-300 transition-all flex items-center justify-center active:scale-95 shrink-0"
             >
               <SlidersHorizontal className="w-4 h-4" />

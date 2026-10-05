@@ -20,8 +20,8 @@ export default function OfficialProtocolModal({
   if (!isOpen) return null;
 
   const totalAllVotes = CATEGORIES.reduce((acc, cat) => {
-    const list = votesData[cat.id] || [];
-    return acc + list.reduce((s, t) => s + t.votes, 0);
+    const list = votesData && Array.isArray(votesData[cat.id]) ? votesData[cat.id] : [];
+    return acc + list.reduce((s, t) => s + (Number(t?.votes) || 0), 0);
   }, 0);
 
   const handlePrint = () => {
@@ -108,11 +108,11 @@ export default function OfficialProtocolModal({
               </thead>
               <tbody className="divide-y divide-zinc-200">
                 {CATEGORIES.map((cat, idx) => {
-                  const list = votesData[cat.id] || [];
+                  const list = votesData && Array.isArray(votesData[cat.id]) ? votesData[cat.id] : [];
                   const ranked = calculateRankings(list);
                   const winners = ranked.filter((t) => t.status === 'winner');
                   const nominees = ranked.filter((t) => t.status === 'nominee');
-                  const catTotal = list.reduce((s, t) => s + t.votes, 0);
+                  const catTotal = list.reduce((s, t) => s + (Number(t?.votes) || 0), 0);
 
                   return (
                     <tr key={cat.id} className="hover:bg-zinc-50">

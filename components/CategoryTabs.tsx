@@ -17,8 +17,8 @@ export default function CategoryTabs({
   votesData,
 }: CategoryTabsProps) {
   const getTotalVotes = (id: CategoryId) => {
-    const teachers = votesData[id] || [];
-    return teachers.reduce((acc, t) => acc + t.votes, 0);
+    const teachers = votesData && Array.isArray(votesData[id]) ? votesData[id] : [];
+    return teachers.reduce((acc, t) => acc + (Number(t?.votes) || 0), 0);
   };
 
   const totalAllVotes = CATEGORIES.reduce((acc, cat) => acc + getTotalVotes(cat.id), 0);

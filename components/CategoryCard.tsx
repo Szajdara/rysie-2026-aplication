@@ -42,9 +42,10 @@ export default function CategoryCard({
   const [newTeacherName, setNewTeacherName] = useState('');
   const [inputError, setInputError] = useState<string | null>(null);
 
-  const rankedTeachers = calculateRankings(teachers);
-  const leaderInfo = getCategoryLeader(teachers);
-  const totalCategoryVotes = teachers.reduce((sum, t) => sum + t.votes, 0);
+  const safeTeachers = Array.isArray(teachers) ? teachers.filter(Boolean) : [];
+  const rankedTeachers = calculateRankings(safeTeachers);
+  const leaderInfo = getCategoryLeader(safeTeachers);
+  const totalCategoryVotes = safeTeachers.reduce((sum, t) => sum + (Number(t?.votes) || 0), 0);
 
   const handleAddSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,8 +58,8 @@ export default function CategoryCard({
 
     const formatted = formatTeacherName(trimmed);
 
-    const alreadyExists = teachers.some(
-      (t) => t.name.toLowerCase() === formatted.toLowerCase()
+    const alreadyExists = safeTeachers.some(
+      (t) => (t?.name || '').toLowerCase() === formatted.toLowerCase()
     );
 
     if (alreadyExists) {

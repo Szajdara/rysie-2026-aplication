@@ -6,12 +6,14 @@ import {
   VotesData,
   TeacherVote,
   HistoryAction,
+  SyncMode,
 } from '@/lib/types';
 import {
   CATEGORIES,
   INITIAL_VOTES_DATA,
   STORAGE_KEY_VOTES,
   STORAGE_KEY_CUSTOM_TEACHERS,
+  STORAGE_KEY_SYNC_MODE,
   DEFAULT_TEACHER_NAMES,
 } from '@/lib/constants';
 import Navbar from '@/components/Navbar';
@@ -19,28 +21,81 @@ import CategoryTabs from '@/components/CategoryTabs';
 import CategoryCard from '@/components/CategoryCard';
 import OfficialProtocolModal from '@/components/OfficialProtocolModal';
 import BackupModal from '@/components/BackupModal';
+import ModeSwitchModal from '@/components/ModeSwitchModal';
 import LoginScreen from '@/components/LoginScreen';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import { AlertTriangle, HardDrive, RefreshCw } from 'lucide-react';
+
+function sanitizeVotes(raw: any): VotesData {
+  const result: VotesData = { ...INITIAL_VOTES_DATA };
+  if (!raw || typeof raw !== 'object') return result;
+
+  CATEGORIES.forEach((cat) => {
+    const list = raw[cat.id];
+    if (Array.isArray(list)) {
+      result[cat.id] = list
+        .filter((t) => t && typeof t === 'object' && typeof t.name === 'string' && t.name.trim().length > 0)
+        .map((t) => ({
+          id: String(t.id || `${cat.id}-${Math.random().toString(36).slice(2)}`),
+          name: String(t.name).trim(),
+          votes: typeof t.votes === 'number' && !isNaN(t.votes) && t.votes >= 0 ? Math.floor(t.votes) : 0,
+          updatedAt: typeof t.updatedAt === 'number' ? t.updatedAt : Date.now(),
+        }));
+    } else {
+      result[cat.id] = [];
+    }
+  });
+
+  return result;
+}
+
+function countTotalVotes(data: VotesData): number {
+  if (!data || typeof data !== 'object') return 0;
+  return Object.values(data)
+    .flat()
+    .reduce((sum, t) => sum + (Number(t?.votes) || 0), 0);
+}
 
 export default function HomePage() {
+  return (
+    <ErrorBoundary>
+      <MainVotingApp />
+    </ErrorBoundary>
+  );
+}
+
+function MainVotingApp() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  const [currentUser, setCurrentUser] = useState<string>('organizator_rysi_2026');
+  const [currentUser, setCurrentUser] = useState<string>('organizator');
   const [votesData, setVotesData] = useState<VotesData>(INITIAL_VOTES_DATA);
   const [selectedTab, setSelectedTab] = useState<CategoryId | 'all'>('all');
   const [historyStack, setHistoryStack] = useState<HistoryAction[]>([]);
   const [allKnownTeacherNames, setAllKnownTeacherNames] = useState<string[]>([]);
-  const [isCloudSynced, setIsCloudSynced] = useState<boolean>(false);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
-  const lastKnownCloudTimestampRef = useRef<number>(0);
-  const isPushingRef = useRef<boolean>(false);
+  // Sync mode: 'live' or 'local'
+  const [syncMode, setSyncMode] = useState<SyncMode>('live');
+  const [isCloudSynced, setIsCloudSynced] = useState<boolean>(false);
+  const [cloudError, setCloudError] = useState<string | null>(null);
+  const [showFailureBanner, setShowFailureBanner] = useState<boolean>(true);
 
   // Modals state
   const [isProtocolModalOpen, setIsProtocolModalOpen] = useState(false);
   const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
+  const [isModeSwitchModalOpen, setIsModeSwitchModalOpen] = useState(false);
 
-  // 1. Initial Authentication and Data loading
+  // References to prevent stale closures and polling races
+  const lastKnownCloudTimestampRef = useRef<number>(0);
+  const isPushingRef = useRef<boolean>(false);
+  const votesDataRef = useRef<VotesData>(INITIAL_VOTES_DATA);
+  votesDataRef.current = votesData;
+  const syncModeRef = useRef<SyncMode>('live');
+  syncModeRef.current = syncMode;
+  const failureCountRef = useRef<number>(0);
+
+  // 1. Initial Load: Theme, Auth, LocalStorage, and Mode
   useEffect(() => {
-    // Initialize Theme
+    // Theme
     const storedTheme = (localStorage.getItem('rysie_theme') as 'dark' | 'light') || 'dark';
     setTheme(storedTheme);
     if (storedTheme === 'dark') {
@@ -49,34 +104,40 @@ export default function HomePage() {
       document.documentElement.classList.remove('dark');
     }
 
-    // Check local session
+    // Sync Mode
+    const savedMode = (localStorage.getItem(STORAGE_KEY_SYNC_MODE) as SyncMode) || 'live';
+    setSyncMode(savedMode);
+    syncModeRef.current = savedMode;
+
+    // Local Session
     const storedSession = localStorage.getItem('rysie_session') || sessionStorage.getItem('rysie_session');
+    let hasLocalSession = false;
     if (storedSession) {
       try {
         const parsed = JSON.parse(storedSession);
         if (parsed?.user) {
           setIsAuthenticated(true);
           setCurrentUser(parsed.user);
+          hasLocalSession = true;
         }
       } catch {
         // ignore
       }
     }
 
-    // Verify session with server API
+    // Check with server
     fetch('/api/auth/check')
       .then((res) => res.json())
       .then((data) => {
         if (data.authenticated) {
           setIsAuthenticated(true);
-        } else {
-          sessionStorage.removeItem('rysie_session');
-          localStorage.removeItem('rysie_session');
+          if (data.user) setCurrentUser(data.user);
+        } else if (!hasLocalSession) {
           setIsAuthenticated(false);
         }
       })
       .catch(() => {
-        if (!storedSession) setIsAuthenticated(false);
+        if (!hasLocalSession) setIsAuthenticated(false);
       });
 
     // Load persisted votes from localStorage
@@ -87,18 +148,15 @@ export default function HomePage() {
     if (savedVotes) {
       try {
         const parsed = JSON.parse(savedVotes);
-        // Ensure all categories exist
-        const merged: VotesData = { ...INITIAL_VOTES_DATA };
-        CATEGORIES.forEach((cat) => {
-          merged[cat.id] = parsed[cat.id] || [];
-        });
-        setVotesData(merged);
+        const sanitized = sanitizeVotes(parsed);
+        setVotesData(sanitized);
+        votesDataRef.current = sanitized;
       } catch (e) {
-        console.error('Error loading saved votes', e);
+        console.error('Błąd odczytu zapisanych głosów z localStorage', e);
       }
     }
 
-    // Load teacher suggestions registry
+    // Teacher suggestions registry
     const savedNames = localStorage.getItem(STORAGE_KEY_CUSTOM_TEACHERS);
     let initialNames = [...DEFAULT_TEACHER_NAMES];
     if (savedNames) {
@@ -127,38 +185,110 @@ export default function HomePage() {
     } catch {}
   };
 
-  // Pull latest votes from cloud database
-  const pullLatestFromCloud = useCallback(async () => {
+  // Push votes to cloud database (used in live mode or manual push)
+  const pushVotesToCloud = useCallback(async (dataToPush: VotesData, customTimestamp?: number) => {
     if (isPushingRef.current) return;
+    isPushingRef.current = true;
+
+    const timestamp = customTimestamp || Date.now();
+    try {
+      const res = await fetch('/api/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ votes: dataToPush }),
+        keepalive: true,
+      });
+
+      const resp = await res.json();
+      if (resp?.cloudSync) {
+        setIsCloudSynced(true);
+        setCloudError(null);
+        failureCountRef.current = 0;
+        if (typeof resp.lastUpdated === 'number') {
+          lastKnownCloudTimestampRef.current = Math.max(lastKnownCloudTimestampRef.current, resp.lastUpdated);
+        }
+      } else if (resp?.error) {
+        setCloudError(resp.error);
+      }
+    } catch (err: any) {
+      console.warn('Nie udało się wysłać danych do chmury:', err);
+      failureCountRef.current += 1;
+      if (failureCountRef.current >= 3) {
+        setCloudError('Brak połączenia z chmurą. Dane są bezpieczne lokalnie.');
+      }
+    } finally {
+      isPushingRef.current = false;
+    }
+  }, []);
+
+  // Pull latest votes from cloud database
+  const pullLatestFromCloud = useCallback(async (force: boolean = false) => {
+    // If in local mode, never touch cloud
+    if (syncModeRef.current === 'local' && !force) return;
+    if (isPushingRef.current) return;
+
     try {
       const res = await fetch('/api/sync', { cache: 'no-store' });
-      if (res.status === 401) {
-        sessionStorage.removeItem('rysie_session');
-        setIsAuthenticated(false);
+      if (!res.ok) {
+        failureCountRef.current += 1;
+        if (failureCountRef.current >= 3) {
+          setCloudError(`Błąd serwera (${res.status})`);
+        }
         return;
       }
-      if (!res.ok) return;
+
       const data = await res.json();
-      setIsCloudSynced(Boolean(data?.cloudSync));
 
-      if (data?.votes && typeof data?.lastUpdated === 'number') {
-        const cloudIsNewer = data.lastUpdated > lastKnownCloudTimestampRef.current;
-        const currentTotalVotes = Object.values(votesData).flat().reduce((sum, t) => sum + (t?.votes || 0), 0);
-        const cloudTotalVotes = Object.values(data.votes as VotesData).flat().reduce((sum, t: any) => sum + (t?.votes || 0), 0);
+      if (!data.configured) {
+        // Cloud database is not configured in Vercel
+        setIsCloudSynced(false);
+        return;
+      }
 
-        if (cloudIsNewer || (cloudTotalVotes > 0 && currentTotalVotes === 0)) {
-          lastKnownCloudTimestampRef.current = data.lastUpdated;
-          setVotesData(data.votes);
+      setIsCloudSynced(Boolean(data.cloudSync));
+      setCloudError(null);
+      failureCountRef.current = 0;
+
+      // Handle brand new database: if cloud is empty but we have local votes, seed cloud!
+      if (data.isEmpty) {
+        const localVotes = countTotalVotes(votesDataRef.current);
+        if (localVotes > 0) {
+          pushVotesToCloud(votesDataRef.current);
+        }
+        return;
+      }
+
+      if (data.votes && typeof data.votes === 'object') {
+        const cloudVotes = sanitizeVotes(data.votes);
+        const cloudTimestamp = typeof data.lastUpdated === 'number' ? data.lastUpdated : 0;
+
+        const currentLocalVotes = countTotalVotes(votesDataRef.current);
+        const cloudTotalVotes = countTotalVotes(cloudVotes);
+
+        // ANTI-DATA-LOSS SHIELD: Never overwrite non-empty local votes with empty cloud votes!
+        if (currentLocalVotes > 0 && cloudTotalVotes === 0) {
+          console.warn('Ochrona danych: zablokowano nadpisanie policzonych głosów pustą odpowiedzią z chmury.');
+          pushVotesToCloud(votesDataRef.current);
+          return;
+        }
+
+        const cloudIsNewer = cloudTimestamp > lastKnownCloudTimestampRef.current;
+        if (cloudIsNewer || (cloudTotalVotes > 0 && currentLocalVotes === 0) || force) {
+          lastKnownCloudTimestampRef.current = cloudTimestamp;
+          setVotesData(cloudVotes);
+          votesDataRef.current = cloudVotes;
+
           try {
-            localStorage.setItem(STORAGE_KEY_VOTES, JSON.stringify(data.votes));
-            localStorage.setItem('rysie_votes_last_updated', String(data.lastUpdated));
+            localStorage.setItem(STORAGE_KEY_VOTES, JSON.stringify(cloudVotes));
+            localStorage.setItem('rysie_votes_last_updated', String(cloudTimestamp));
           } catch {}
 
           // Merge teacher suggestions
-          const cloudTeachers = Object.values(data.votes as VotesData)
+          const cloudTeachers = Object.values(cloudVotes)
             .flat()
             .map((t) => t?.name)
-            .filter(Boolean);
+            .filter(Boolean) as string[];
+
           setAllKnownTeacherNames((prev) => {
             const combined = Array.from(
               new Set([...DEFAULT_TEACHER_NAMES, ...prev, ...cloudTeachers])
@@ -171,19 +301,25 @@ export default function HomePage() {
         }
       }
     } catch {
-      // silent network fallback
+      failureCountRef.current += 1;
+      if (failureCountRef.current >= 3) {
+        setCloudError('Problem z połączeniem z bazą w chmurze.');
+      }
     }
-  }, [votesData]);
+  }, [pushVotesToCloud]);
 
-  // Real-time synchronization loop across all devices
+  // Real-time synchronization loop (ONLY runs when in 'live' mode and page is visible)
   useEffect(() => {
     if (!isAuthenticated) return;
+    if (syncMode !== 'live') return;
 
+    // Initial pull
     pullLatestFromCloud();
 
     const interval = setInterval(() => {
+      if (typeof document !== 'undefined' && document.hidden) return;
       pullLatestFromCloud();
-    }, 3000);
+    }, 5000);
 
     const onFocus = () => pullLatestFromCloud();
     window.addEventListener('focus', onFocus);
@@ -192,47 +328,59 @@ export default function HomePage() {
       clearInterval(interval);
       window.removeEventListener('focus', onFocus);
     };
-  }, [isAuthenticated, pullLatestFromCloud]);
+  }, [isAuthenticated, syncMode, pullLatestFromCloud]);
 
-  // Save changes to localStorage & trigger background cloud sync
+  // Switch mode handler (Live <-> Local)
+  const handleSwitchMode = (newMode: SyncMode, pushLocalToCloud: boolean = true) => {
+    setSyncMode(newMode);
+    syncModeRef.current = newMode;
+    try {
+      localStorage.setItem(STORAGE_KEY_SYNC_MODE, newMode);
+    } catch {}
+
+    if (newMode === 'local') {
+      setIsCloudSynced(false);
+      setCloudError(null);
+    } else {
+      // Switched to live
+      if (pushLocalToCloud && countTotalVotes(votesDataRef.current) > 0) {
+        pushVotesToCloud(votesDataRef.current, Date.now());
+      } else {
+        pullLatestFromCloud(true);
+      }
+    }
+  };
+
+  // Save changes locally and conditionally sync to cloud
   const persistVotes = useCallback((newData: VotesData) => {
+    const sanitized = sanitizeVotes(newData);
     const now = Date.now();
     lastKnownCloudTimestampRef.current = now;
-    setVotesData(newData);
+    setVotesData(sanitized);
+    votesDataRef.current = sanitized;
+
     try {
-      localStorage.setItem(STORAGE_KEY_VOTES, JSON.stringify(newData));
+      localStorage.setItem(STORAGE_KEY_VOTES, JSON.stringify(sanitized));
       localStorage.setItem('rysie_votes_last_updated', String(now));
     } catch (e) {
-      console.error('Failed to persist votes locally', e);
+      console.error('Nie udało się zapisać głosów lokalnie', e);
     }
 
-    isPushingRef.current = true;
-    fetch('/api/sync', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ votes: newData }),
-      keepalive: true,
-    })
-      .then((res) => res.json())
-      .then((resp) => {
-        if (resp?.cloudSync) setIsCloudSynced(true);
-        if (typeof resp?.lastUpdated === 'number') {
-          lastKnownCloudTimestampRef.current = Math.max(lastKnownCloudTimestampRef.current, resp.lastUpdated);
-        }
-      })
-      .catch((err) => {
-        console.error('Failed to sync to cloud', err);
-      })
-      .finally(() => {
-        isPushingRef.current = false;
-      });
-  }, []);
+    // In local mode, DO NOT send anything to cloud! 100% offline & safe.
+    if (syncModeRef.current === 'local') {
+      return;
+    }
+
+    pushVotesToCloud(sanitized, now);
+  }, [pushVotesToCloud]);
 
   // Registry update helper
   const registerTeacherName = useCallback((name: string) => {
+    const trimmed = name.trim();
+    if (!trimmed) return;
     setAllKnownTeacherNames((prev) => {
-      if (!prev.includes(name)) {
-        const updated = [...prev, name].sort((a, b) => a.localeCompare(b, 'pl'));
+      if (!prev.includes(trimmed)) {
+        const updated = [...prev, trimmed].sort((a, b) => a.localeCompare(b, 'pl'));
         try {
           localStorage.setItem(STORAGE_KEY_CUSTOM_TEACHERS, JSON.stringify(updated));
         } catch {}
@@ -256,8 +404,8 @@ export default function HomePage() {
       updatedAt: Date.now(),
     };
 
-    const currentList = votesData[categoryId] || [];
-    const updated = {
+    const currentList = Array.isArray(votesData[categoryId]) ? votesData[categoryId] : [];
+    const updated: VotesData = {
       ...votesData,
       [categoryId]: [...currentList, newTeacher],
     };
@@ -270,18 +418,18 @@ export default function HomePage() {
     teacherId: string,
     delta: number = 1
   ) => {
-    const currentList = votesData[categoryId] || [];
-    const teacher = currentList.find((t) => t.id === teacherId);
+    const currentList = Array.isArray(votesData[categoryId]) ? votesData[categoryId] : [];
+    const teacher = currentList.find((t) => t?.id === teacherId);
     if (!teacher) return;
 
-    const previousVotes = teacher.votes;
+    const previousVotes = Number(teacher.votes) || 0;
     const newVotes = previousVotes + delta;
 
     const updatedList = currentList.map((t) =>
       t.id === teacherId ? { ...t, votes: newVotes, updatedAt: Date.now() } : t
     );
 
-    const updatedData = {
+    const updatedData: VotesData = {
       ...votesData,
       [categoryId]: updatedList,
     };
@@ -304,18 +452,18 @@ export default function HomePage() {
   };
 
   const handleDecrementVote = (categoryId: CategoryId, teacherId: string) => {
-    const currentList = votesData[categoryId] || [];
-    const teacher = currentList.find((t) => t.id === teacherId);
-    if (!teacher || teacher.votes <= 0) return;
+    const currentList = Array.isArray(votesData[categoryId]) ? votesData[categoryId] : [];
+    const teacher = currentList.find((t) => t?.id === teacherId);
+    if (!teacher || (Number(teacher.votes) || 0) <= 0) return;
 
-    const previousVotes = teacher.votes;
+    const previousVotes = Number(teacher.votes) || 0;
     const newVotes = Math.max(0, previousVotes - 1);
 
     const updatedList = currentList.map((t) =>
       t.id === teacherId ? { ...t, votes: newVotes, updatedAt: Date.now() } : t
     );
 
-    const updatedData = {
+    const updatedData: VotesData = {
       ...votesData,
       [categoryId]: updatedList,
     };
@@ -338,10 +486,10 @@ export default function HomePage() {
   };
 
   const handleDeleteTeacher = (categoryId: CategoryId, teacherId: string) => {
-    const currentList = votesData[categoryId] || [];
-    const updatedList = currentList.filter((t) => t.id !== teacherId);
+    const currentList = Array.isArray(votesData[categoryId]) ? votesData[categoryId] : [];
+    const updatedList = currentList.filter((t) => t?.id !== teacherId);
 
-    const updatedData = {
+    const updatedData: VotesData = {
       ...votesData,
       [categoryId]: updatedList,
     };
@@ -353,7 +501,7 @@ export default function HomePage() {
     if (historyStack.length === 0) return;
 
     const lastAction = historyStack[historyStack.length - 1];
-    const categoryList = votesData[lastAction.categoryId] || [];
+    const categoryList = Array.isArray(votesData[lastAction.categoryId]) ? votesData[lastAction.categoryId] : [];
 
     const updatedList = categoryList.map((t) =>
       t.id === lastAction.teacherId
@@ -361,7 +509,7 @@ export default function HomePage() {
         : t
     );
 
-    const updatedData = {
+    const updatedData: VotesData = {
       ...votesData,
       [lastAction.categoryId]: updatedList,
     };
@@ -376,15 +524,13 @@ export default function HomePage() {
   };
 
   const handleRestoreData = (restored: VotesData) => {
-    const sanitized: VotesData = { ...INITIAL_VOTES_DATA };
-    CATEGORIES.forEach((cat) => {
-      sanitized[cat.id] = Array.isArray(restored[cat.id]) ? restored[cat.id] : [];
-    });
+    const sanitized = sanitizeVotes(restored);
     persistVotes(sanitized);
 
     const names = Object.values(sanitized)
       .flat()
-      .map((t) => t.name);
+      .map((t) => t?.name)
+      .filter(Boolean) as string[];
     const unique = Array.from(new Set(names));
     setAllKnownTeacherNames(unique);
     try {
@@ -402,14 +548,10 @@ export default function HomePage() {
   };
 
   // Calculations for UI statistics
-  const totalVotes = useMemo(() => {
-    return Object.values(votesData)
-      .flat()
-      .reduce((sum, t) => sum + (t?.votes || 0), 0);
-  }, [votesData]);
+  const totalVotes = useMemo(() => countTotalVotes(votesData), [votesData]);
 
   const totalTeachers = useMemo(() => {
-    return Object.values(votesData).flat().length;
+    return Object.values(votesData).flat().filter(Boolean).length;
   }, [votesData]);
 
   // Loading state
@@ -458,8 +600,42 @@ export default function HomePage() {
         onOpenProtocol={() => setIsProtocolModalOpen(true)}
         onOpenBackup={() => setIsBackupModalOpen(true)}
         onLogout={handleLogout}
+        syncMode={syncMode}
         isCloudSynced={isCloudSynced}
+        cloudError={cloudError}
+        onOpenModeSwitch={() => setIsModeSwitchModalOpen(true)}
       />
+
+      {/* Cloud issue alert banner: shown when live is failing */}
+      {syncMode === 'live' && cloudError && showFailureBanner && (
+        <div className="bg-amber-500/15 dark:bg-amber-500/20 border-b border-amber-500/30 px-3 sm:px-6 py-2.5 text-xs text-amber-950 dark:text-amber-200 transition-all">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+              <span className="truncate">
+                <strong>Baza na żywo ma problem:</strong> {cloudError} Twoje głosy są bezpieczne na tym telefonie.
+              </span>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => handleSwitchMode('local')}
+                className="px-3 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all"
+              >
+                <HardDrive className="w-3.5 h-3.5" />
+                <span>Włącz tryb lokalny</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowFailureBanner(false)}
+                className="p-1 text-slate-500 hover:text-slate-800 dark:text-zinc-400 dark:hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Category selector tabs bar */}
       <CategoryTabs
@@ -478,8 +654,6 @@ export default function HomePage() {
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
-
-
         {/* 6 Categories Grid */}
         <div
           className={`grid gap-6 ${
@@ -516,7 +690,21 @@ export default function HomePage() {
         votesData={votesData}
         onRestoreData={handleRestoreData}
         onResetAllData={handleResetAllData}
+        syncMode={syncMode}
         isCloudSynced={isCloudSynced}
+        cloudError={cloudError}
+        onSwitchMode={handleSwitchMode}
+        onForcePushCloud={() => pushVotesToCloud(votesDataRef.current, Date.now())}
+        onForcePullCloud={() => pullLatestFromCloud(true)}
+      />
+
+      <ModeSwitchModal
+        isOpen={isModeSwitchModalOpen}
+        onClose={() => setIsModeSwitchModalOpen(false)}
+        currentMode={syncMode}
+        onSwitchMode={handleSwitchMode}
+        isCloudConnected={isCloudSynced}
+        localVotesCount={totalVotes}
       />
     </div>
   );

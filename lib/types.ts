@@ -42,3 +42,6 @@ export interface RankedTeacher extends TeacherVote {
   status: TeacherRankStatus;
   isTied: boolean;
 }
+
+export type SyncMode = 'live' | 'local';
+
